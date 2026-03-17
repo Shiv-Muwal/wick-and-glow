@@ -1,0 +1,58 @@
+/* Minimal global styles + design tokens. All layout is done with Tailwind. */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --cream: #f7ede2;
+  --blush: #f5cac3;
+  --sage: #84a59d;
+  --gold: #f6bd60;
+  --dark: #1f2937;
+  --radius: 16px;
+  --shadow: 0 4px 24px rgba(31, 41, 55, 0.08);
+  --shadow-lg: 0 8px 40px rgba(31, 41, 55, 0.14);
+  --t: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --bg: #faf6f1;
+  --bg2: #ffffff;
+  --surface: rgba(255, 255, 255, 0.9);
+  --surface2: rgba(247, 237, 226, 0.55);
+  --text: #1f2937;
+  --text2: #6b7280;
+  --text3: #9ca3af;
+  --border: rgba(132, 165, 157, 0.2);
+  --sidebar-bg: #1f2937;
+  --sidebar-text: rgba(247, 237, 226, 0.85);
+  --sidebar-hover: rgba(246, 189, 96, 0.1);
+  --sidebar-active: rgba(246, 189, 96, 0.18);
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* Scrollbar styling to match HTML admin */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+/* Icon helper so SVGs stay consistent even without Tailwind classes */
+.nav-icon {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+}
+
