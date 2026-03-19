@@ -24,6 +24,13 @@ export function AdminProvider({ children }) {
           ...s,
           orders: s.orders.map((o) => (o.id === id ? { ...o, status } : o)),
         })),
+      restockProduct: (id, quantity) =>
+        setState((s) => ({
+          ...s,
+          products: s.products.map((p) =>
+            p.id === id ? { ...p, stock: p.stock + quantity } : p
+          ),
+        })),
     }),
     [state]
   );

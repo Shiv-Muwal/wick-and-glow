@@ -39,7 +39,7 @@ function SidebarLayout({ children }) {
               collapsed ? 'opacity-0' : 'opacity-100'
             }`}
           >
-            Maeri Admin
+            Wick &amp; Glow
           </span>
         </div>
 
