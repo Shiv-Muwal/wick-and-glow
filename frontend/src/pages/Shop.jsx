@@ -7,20 +7,28 @@ import Newsletter from '../components/Newsletter';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const CATEGORIES = ['Floral', 'Woody', 'Herbal', 'Decorative', 'Classic'];
+const FRAGRANCES = ['Rose Petal', 'White Oudh', 'French Lavender', 'Jasmine', 'Sandalwood Vanilla'];
 
 export default function Shop() {
   useScrollReveal();
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [search, setSearch] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState([]);
+  const [fragranceFilter, setFragranceFilter] = useState([]);
   const [maxPrice, setMaxPrice] = useState(2000);
   const [sort, setSort] = useState('default');
 
   const filtered = PRODUCTS.filter((p) => {
-    const matchSearch = !search || p.name.toLowerCase().includes(search.toLowerCase());
-    const matchCat = !categoryFilter || p.category === categoryFilter;
+    const term = search.trim().toLowerCase();
+    const matchSearch =
+      !term ||
+      p.name.toLowerCase().includes(term) ||
+      (p.fragrance || '').toLowerCase().includes(term);
+    const matchCat = categoryFilter.length === 0 || categoryFilter.includes(p.category);
+    const matchFrag =
+      fragranceFilter.length === 0 || fragranceFilter.includes(p.fragrance);
     const matchPrice = parseInt(p.price, 10) <= maxPrice;
-    return matchSearch && matchCat && matchPrice;
+    return matchSearch && matchCat && matchFrag && matchPrice;
   });
 
   const sorted = [...filtered].sort((a, b) => {
@@ -64,10 +72,37 @@ export default function Shop() {
                 <label key={cat} className="filter-option">
                   <input
                     type="checkbox"
-                    checked={categoryFilter === cat}
-                    onChange={() => setCategoryFilter((c) => (c === cat ? '' : cat))}
+                    checked={categoryFilter.includes(cat)}
+                    onChange={() =>
+                      setCategoryFilter((prev) =>
+                        prev.includes(cat)
+                          ? prev.filter((value) => value !== cat)
+                          : [...prev, cat]
+                      )
+                    }
                   />
                   <span>{cat}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="filter-card">
+            <h4>Fragrance</h4>
+            <div className="filter-options">
+              {FRAGRANCES.map((fragrance) => (
+                <label key={fragrance} className="filter-option">
+                  <input
+                    type="checkbox"
+                    checked={fragranceFilter.includes(fragrance)}
+                    onChange={() =>
+                      setFragranceFilter((prev) =>
+                        prev.includes(fragrance)
+                          ? prev.filter((value) => value !== fragrance)
+                          : [...prev, fragrance]
+                      )
+                    }
+                  />
+                  <span>{fragrance === 'French Lavender' ? 'Lavender' : fragrance}</span>
                 </label>
               ))}
             </div>
@@ -86,11 +121,11 @@ export default function Shop() {
           </div>
           <button
             type="button"
-            className="btn-primary"
-            style={{ width: '100%', marginTop: 10 }}
+            className="btn-primary mt-[10px] w-full"
             onClick={() => {
               setSearch('');
-              setCategoryFilter('');
+              setCategoryFilter([]);
+              setFragranceFilter([]);
               setMaxPrice(2000);
             }}
           >
@@ -116,7 +151,12 @@ export default function Shop() {
         </div>
       </div>
 
-      <div style={{ marginTop: 60 }}><Newsletter /></div>
+      <div className="mt-[60px]">
+        <Newsletter
+          title="Stay in the Loop"
+          description="Subscribe for new arrivals, exclusive offers, and candle care tips."
+        />
+      </div>
 
       <QuickViewModal
         product={quickViewProduct}

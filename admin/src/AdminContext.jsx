@@ -31,6 +31,50 @@ export function AdminProvider({ children }) {
             p.id === id ? { ...p, stock: p.stock + quantity } : p
           ),
         })),
+      toggleCouponActive: (id) =>
+        setState((s) => ({
+          ...s,
+          coupons: s.coupons.map((c) =>
+            c.id === id ? { ...c, active: !c.active } : c
+          ),
+        })),
+      deleteCoupon: (id) =>
+        setState((s) => ({
+          ...s,
+          coupons: s.coupons.filter((c) => c.id !== id),
+        })),
+      addCoupon: (couponData) =>
+        setState((s) => {
+          const nextId =
+            s.coupons.length > 0
+              ? Math.max(...s.coupons.map((c) => c.id)) + 1
+              : 1;
+          const nextCode = `NEW${String(nextId).padStart(2, '0')}`;
+          const expiryDate = new Date();
+          expiryDate.setDate(expiryDate.getDate() + 30);
+          const code = couponData?.code?.trim()?.toUpperCase() || nextCode;
+          const discountValue = Number(couponData?.discount);
+          const discount =
+            Number.isFinite(discountValue) && discountValue > 0
+              ? discountValue
+              : 10;
+          const expiry =
+            couponData?.expiry?.trim() || expiryDate.toISOString().slice(0, 10);
+
+          return {
+            ...s,
+            coupons: [
+              ...s.coupons,
+              {
+                id: nextId,
+                code,
+                discount,
+                expiry,
+                active: true,
+              },
+            ],
+          };
+        }),
     }),
     [state]
   );

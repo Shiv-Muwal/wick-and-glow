@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { useToast } from '../context/ToastContext';
 
-export default function Newsletter() {
+export default function Newsletter({
+  title = 'Join the Lumière Circle',
+  description = 'Get 10% off your first order, plus exclusive access to new scents, rituals, and candle care tips.',
+}) {
   const [email, setEmail] = useState('');
   const { showToast } = useToast();
 
@@ -14,8 +17,8 @@ export default function Newsletter() {
 
   return (
     <div className="newsletter">
-      <h2>Join the Lumière Circle</h2>
-      <p>Get 10% off your first order, plus exclusive access to new scents, rituals, and candle care tips.</p>
+      <h2>{title}</h2>
+      <p>{description}</p>
       <form className="newsletter-form" onSubmit={handleSubmit}>
         <input
           type="email"

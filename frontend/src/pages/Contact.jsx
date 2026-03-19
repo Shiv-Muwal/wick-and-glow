@@ -22,12 +22,12 @@ export default function Contact() {
       <div className="shop-hero">
         <h1>Get in Touch</h1>
         <div className="breadcrumb"><Link to="/">Home</Link> / <span>Contact</span></div>
-        <p style={{ marginTop: 16, color: 'var(--light-text)', fontSize: '0.95rem' }}>
-          We&apos;d love to hear from you.
+        <p className="mt-4 text-[0.95rem] text-lightText">
+          We&apos;d love to hear from you. Whether it&apos;s a question, a custom order, or just to say hello.
         </p>
       </div>
 
-      <section style={{ padding: '60px 0 100px' }}>
+      <section className="px-0 pb-[100px] pt-[60px]">
         <div className="contact-layout">
           <div className="reveal">
             <h2>Let&apos;s Start a Conversation</h2>
@@ -53,6 +53,45 @@ export default function Contact() {
                   <h4>Call or WhatsApp</h4>
                   <p>+91 98765 43210<br />Mon–Sat: 10am – 7pm IST</p>
                 </div>
+              </div>
+              <div className="contact-item">
+                <div className="contact-icon">📸</div>
+                <div>
+                  <h4>Follow Us</h4>
+                  <p>@lumierecandles on Instagram<br />Join 45K+ candle lovers</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-12 rounded-[20px] bg-blush p-8">
+              <h4 className="mb-5 font-['Playfair_Display',serif] text-[1.1rem] text-deep">
+                Common Questions
+              </h4>
+              <div className="flex flex-col gap-[14px]">
+                <details className="cursor-pointer">
+                  <summary className="list-none text-[0.9rem] font-semibold text-text">
+                    Do you offer bulk / corporate orders?
+                  </summary>
+                  <p className="mt-2 text-[0.85rem] leading-[1.6] text-lightText">
+                    Yes! We love creating custom candle sets for corporate gifting, weddings, and events. Email us at orders@lumiere.in for pricing.
+                  </p>
+                </details>
+                <details className="cursor-pointer">
+                  <summary className="list-none text-[0.9rem] font-semibold text-text">
+                    How long does shipping take?
+                  </summary>
+                  <p className="mt-2 text-[0.85rem] leading-[1.6] text-lightText">
+                    Standard shipping is 3–5 business days. Express delivery (1–2 days) is available for major cities. All orders include tracking.
+                  </p>
+                </details>
+                <details className="cursor-pointer">
+                  <summary className="list-none text-[0.9rem] font-semibold text-text">
+                    Can I request a custom scent?
+                  </summary>
+                  <p className="mt-2 text-[0.85rem] leading-[1.6] text-lightText">
+                    Absolutely! We offer custom fragrance blending for orders of 20+ units. Reach out with your inspiration and we&apos;ll create something unique for you.
+                  </p>
+                </details>
               </div>
             </div>
           </div>
@@ -85,20 +124,42 @@ export default function Contact() {
                   <option>Order Enquiry</option>
                   <option>Custom / Bulk Order</option>
                   <option>Product Question</option>
+                  <option>Collaboration</option>
                   <option>General Feedback</option>
+                  <option>Other</option>
                 </select>
               </div>
               <div className="form-group">
                 <label>Message</label>
                 <textarea name="message" placeholder="Tell us how we can help you..." value={form.message} onChange={handleChange} required />
               </div>
-              <button type="submit" className="btn-primary" style={{ width: '100%', padding: 18 }}>Send Message →</button>
+              <button type="submit" className="btn-primary w-full px-4 py-[18px]">Send Message →</button>
             </form>
+          </div>
+        </div>
+
+        <div className="px-[60px]">
+          <div className="reveal shadow-soft">
+            <div className="mt-5 rounded-[24px] bg-white p-[42px] text-center">
+            <div className="mb-[10px] text-[2rem]">📍</div>
+            <p className="mb-[6px] font-semibold text-deep">
+              Lumière Studio — Bandra West, Mumbai
+            </p>
+            <p className="mb-[14px] text-[0.85rem] text-lightText">
+              12 Artisan Lane, Mumbai 400050 · Open Mon–Sat 10am–7pm
+            </p>
+            <a href="https://maps.google.com" target="_blank" rel="noreferrer" className="btn-secondary">
+              Open in Google Maps →
+            </a>
+            </div>
           </div>
         </div>
       </section>
 
-      <Newsletter />
+      <Newsletter
+        title="Stay Connected"
+        description="Get candle care tips, new arrivals, and exclusive offers delivered to your inbox."
+      />
     </>
   );
 }

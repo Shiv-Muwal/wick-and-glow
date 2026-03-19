@@ -20,13 +20,16 @@ function Inventory() {
 
   const handleCloseRestock = () => {
     setRestockOpen(false);
+    setActiveProduct(null);
   };
 
-  const handleSubmitRestock = () => {
+  const handleSubmitRestock = (e) => {
+    if (e?.preventDefault) e.preventDefault();
     const qtyNum = Number(restockQty);
     if (!activeProduct || Number.isNaN(qtyNum) || qtyNum <= 0) return;
     restockProduct(activeProduct.id, qtyNum);
     setRestockOpen(false);
+    setActiveProduct(null);
   };
 
   return (

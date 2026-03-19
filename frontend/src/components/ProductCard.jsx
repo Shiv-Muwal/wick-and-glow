@@ -31,20 +31,26 @@ export default function ProductCard({ product, onQuickView }) {
     onQuickView(product);
   };
 
-  const badgeClass = product.badge === 'new' ? 'new' : product.badge === 'premium' ? '' : '';
-  const badgeStyle = product.badge === 'premium' ? { background: '#84a59d' } : {};
+  const badgeClass = product.badge === 'new' ? 'new' : product.badge === 'limited' ? 'sale' : '';
+  const badgeTone = product.badge === 'premium' ? 'bg-[#84a59d]' : '';
+  const badgeLabelMap = {
+    bestseller: 'Bestseller',
+    new: 'New',
+    premium: 'Premium',
+    limited: 'Limited',
+  };
 
   return (
     <Link to={`/product/${product.id}`} className="product-card reveal">
-      <div className="product-image" style={{ background: `linear-gradient(135deg,${product.color},#f7ede2)` }}>
-        <div style={{ fontSize: '6rem', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+      <div className={`product-image ${product.imageClass || ''}`}>
+        <div className="flex h-full items-center justify-center text-[6rem]">
           {product.emoji}
         </div>
-        {product.badge && (
-          <span className={`product-badge ${badgeClass}`} style={badgeStyle}>
-            {product.badge}
+        {product.badge ? (
+          <span className={`product-badge ${badgeClass} ${badgeTone}`}>
+            {badgeLabelMap[product.badge] || product.badge}
           </span>
-        )}
+        ) : null}
         <button type="button" className="wishlist-btn" onClick={handleWishlist} aria-label="Wishlist">
           {wishlisted ? '♥' : '♡'}
         </button>
@@ -53,10 +59,16 @@ export default function ProductCard({ product, onQuickView }) {
         </div>
       </div>
       <div className="product-info">
-        <div className="product-category">{product.category}</div>
+        <div className="product-category">
+          {product.category}
+          {product.fragrance ? ` · ${product.fragrance}` : ''}
+        </div>
         <div className="product-name">{product.name}</div>
         <div className="product-meta">
-          <div className="product-price">₹{product.price}</div>
+          <div className="product-price">
+            ₹{product.price}
+            {product.originalPrice ? <span className="original">₹{product.originalPrice}</span> : null}
+          </div>
           <button type="button" className={`add-cart ${added ? 'added' : ''}`} onClick={handleAddToCart}>
             {added ? '✓ Added!' : 'Add to Cart'}
           </button>
