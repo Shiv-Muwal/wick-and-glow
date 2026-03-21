@@ -28,13 +28,36 @@ const customerSchema = new mongoose.Schema({
   spend: { type: Number, default: 0 },
 });
 
+const shippingAddressSchema = new mongoose.Schema(
+  {
+    line1: { type: String, required: true },
+    line2: { type: String, default: '' },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    pincode: { type: String, required: true },
+  },
+  { _id: false }
+);
+
 const orderSchema = new mongoose.Schema(
   {
     _id: { type: String, required: true },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
     customerName: { type: String, required: true },
     customerEmail: { type: String, required: true, lowercase: true },
+    phone: { type: String, default: '' },
+    shippingAddress: { type: shippingAddressSchema, default: undefined },
     productLabel: { type: String, required: true },
+    subtotal: { type: Number, default: 0 },
+    discountPercent: { type: Number, default: 0 },
+    discountAmount: { type: Number, default: 0 },
+    shippingFee: { type: Number, default: 0 },
     amount: { type: Number, required: true },
+    paymentMethod: { type: String, default: 'cod' },
     status: { type: String, required: true },
     date: { type: String, required: true },
     items: { type: [mongoose.Schema.Types.Mixed], default: [] },
@@ -86,6 +109,37 @@ const reviewSchema = new mongoose.Schema({
   productId: { type: String },
 });
 
+/** Storefront accounts (JWT auth). */
+const userSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    passwordHash: { type: String, required: true, select: false },
+  },
+  { timestamps: true }
+);
+
+const cartItemSchema = new mongoose.Schema(
+  {
+    productId: { type: String, required: true },
+    quantity: { type: Number, required: true, min: 1 },
+  },
+  { _id: false }
+);
+
+const cartSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      unique: true,
+    },
+    items: { type: [cartItemSchema], default: [] },
+  },
+  { timestamps: true }
+);
+
 export const Product =
   mongoose.models.Product || mongoose.model('Product', productSchema);
 export const Customer =
@@ -102,3 +156,5 @@ export const NewsletterSubscriber =
   mongoose.model('NewsletterSubscriber', newsletterSchema);
 export const Review =
   mongoose.models.Review || mongoose.model('Review', reviewSchema);
+export const User = mongoose.models.User || mongoose.model('User', userSchema);
+export const Cart = mongoose.models.Cart || mongoose.model('Cart', cartSchema);

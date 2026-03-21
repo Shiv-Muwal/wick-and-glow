@@ -32,6 +32,16 @@ On first connection, if the `products` collection is empty, the server **seeds**
 
 If Cloudinary vars are missing, the API still runs; **image upload** routes return `503` until you add them.
 
+## Auth (store customers)
+
+| Method | Path | Body | Description |
+|--------|------|------|-------------|
+| POST | `/api/auth/register` | `email`, `password` (min 8), `firstName`, `lastName` | Creates account, returns `{ token, user }` |
+| POST | `/api/auth/login` | `email`, `password` | Returns `{ token, user }` |
+| GET | `/api/auth/me` | Header `Authorization: Bearer <token>` | Returns `{ user }` |
+
+Set `JWT_SECRET` in production (see `.env.example`).
+
 ## Public API (`/api`)
 
 | Method | Path | Description |
@@ -43,7 +53,11 @@ If Cloudinary vars are missing, the API still runs; **image upload** routes retu
 | POST | `/coupons/validate` | `{ "code" }` |
 | POST | `/contact` | Contact form |
 | POST | `/newsletter` | `{ "email" }` |
-| POST | `/orders` | Guest checkout |
+| POST | `/orders` | Full checkout (see below). Optional `Authorization: Bearer` links order to signed-in user. |
+| GET | `/orders/my` | **Auth required** — orders placed while logged in |
+| GET | `/orders/:orderId` | **Auth required** — single order (owner only) |
+
+**`POST /orders` body:** `customerName`, `customerEmail`, `phone` (10 digits), `shippingAddress` (`line1`, `line2?`, `city`, `state`, `pincode` 6 digits), `items` (`productId`, `qty`), optional `couponCode`, `paymentMethod` (`cod` only for now). Totals: item subtotal → coupon % off → **₹49 shipping** (waived if discounted subtotal ≥ ₹1000).
 
 ## Admin API (`/api/admin`)
 

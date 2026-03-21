@@ -22,6 +22,42 @@ const upload = multer({
   },
 });
 
+/** `#ORD-…` IDs path segment mein kabhi 404 / mismatch dete hain; query + normalize zyada safe. */
+function normalizeAdminOrderId(raw) {
+  let s = String(raw ?? '').trim();
+  if (!s) return '';
+  try {
+    s = decodeURIComponent(s);
+  } catch {
+    /* ignore */
+  }
+  if (!s.startsWith('#') && /^ORD-/i.test(s)) {
+    s = `#${s}`;
+  }
+  return s;
+}
+
+function orderToAdminDetail(o) {
+  return {
+    id: o._id,
+    customerName: o.customerName,
+    customerEmail: o.customerEmail,
+    phone: o.phone || '',
+    shippingAddress: o.shippingAddress || null,
+    items: o.items || [],
+    subtotal: o.subtotal ?? 0,
+    discountPercent: o.discountPercent ?? 0,
+    discountAmount: o.discountAmount ?? 0,
+    shippingFee: o.shippingFee ?? 0,
+    amount: o.amount,
+    status: o.status,
+    date: o.date,
+    paymentMethod: o.paymentMethod || 'cod',
+    productLabel: o.productLabel,
+    userId: o.userId ? String(o.userId) : null,
+  };
+}
+
 export function adminRouter() {
   const r = Router();
 
@@ -42,6 +78,9 @@ export function adminRouter() {
           amount: o.amount,
           status: o.status,
           date: o.date,
+          phone: o.phone || '—',
+          pincode: o.shippingAddress?.pincode || '—',
+          payment: o.paymentMethod || 'cod',
         })),
         customers: customers.map((c) => ({
           id: String(c._id),
@@ -93,11 +132,54 @@ export function adminRouter() {
     }
   });
 
+  /** Prefer this for order IDs that contain `#` (avoids path-encoding issues). */
+  r.get('/orders/detail', async (req, res, next) => {
+    try {
+      const id = normalizeAdminOrderId(req.query.id);
+      if (!id) {
+        return res.status(400).json({ error: 'Query ?id= is required (e.g. id=%23ORD-…)' });
+      }
+      const o = await Order.findOne({ _id: id }).lean();
+      if (!o) return res.status(404).json({ error: 'Order not found' });
+      res.json(orderToAdminDetail(o));
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  r.get('/orders/:id', async (req, res, next) => {
+    try {
+      const id = normalizeAdminOrderId(req.params.id);
+      const o = await Order.findOne({ _id: id }).lean();
+      if (!o) return res.status(404).json({ error: 'Order not found' });
+      res.json(orderToAdminDetail(o));
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  r.patch('/orders/detail', async (req, res, next) => {
+    try {
+      const id = normalizeAdminOrderId(req.query.id ?? req.body?.id);
+      if (!id) {
+        return res.status(400).json({ error: 'id required (query ?id= or body.id)' });
+      }
+      const { status } = req.body || {};
+      if (!status) return res.status(400).json({ error: 'status required' });
+      const o = await Order.findOneAndUpdate({ _id: id }, { status }, { new: true });
+      if (!o) return res.status(404).json({ error: 'Not found' });
+      res.json({ ok: true });
+    } catch (e) {
+      next(e);
+    }
+  });
+
   r.patch('/orders/:id', async (req, res, next) => {
     try {
       const { status } = req.body || {};
       if (!status) return res.status(400).json({ error: 'status required' });
-      const o = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true });
+      const id = normalizeAdminOrderId(req.params.id);
+      const o = await Order.findOneAndUpdate({ _id: id }, { status }, { new: true });
       if (!o) return res.status(404).json({ error: 'Not found' });
       res.json({ ok: true });
     } catch (e) {

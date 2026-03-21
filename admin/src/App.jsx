@@ -4,6 +4,7 @@ import SidebarLayout from './components/SidebarLayout.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Products from './pages/Products.jsx';
 import Orders from './pages/Orders.jsx';
+import OrderDetail from './pages/OrderDetail.jsx';
 import Customers from './pages/Customers.jsx';
 import Blogs from './pages/Blogs.jsx';
 import Inventory from './pages/Inventory.jsx';
@@ -17,6 +18,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/orders/:orderId" element={<OrderDetail />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/customers" element={<Customers />} />
         <Route path="/blogs" element={<Blogs />} />

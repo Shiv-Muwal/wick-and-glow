@@ -2,7 +2,7 @@ export default function Testimonials() {
   const items = [
     { stars: 5, text: '"The Lavender Calm candle transformed my evenings. I light it during my reading time and the scent is absolutely divine — not overpowering at all."', name: 'Priya Sharma', loc: 'Mumbai, India', avatar: 'P' },
     { stars: 5, text: '"Gifted the White Oudh candle to my mother on her birthday and she was absolutely thrilled. The packaging alone feels like opening a luxury gift box."', name: 'Arjun Mehta', loc: 'Delhi, India', avatar: 'A' },
-    { stars: 5, text: '"I\'ve tried many candle brands but Lumière is on another level. The Floral Clay Candle looks like artwork! So beautiful I almost don\'t want to burn it."', name: 'Sneha Iyer', loc: 'Bengaluru, India', avatar: 'S' },
+    { stars: 5, text: '"I\'ve tried many candle brands but Wick & Glow is on another level. The Floral Clay Candle looks like artwork! So beautiful I almost don\'t want to burn it."', name: 'Sneha Iyer', loc: 'Bengaluru, India', avatar: 'S' },
   ];
 
   return (

@@ -93,7 +93,7 @@ animate-[drip_4s_ease-in-out_infinite] [animation-delay:1.5s]" />
                   gap: 2,
                 }}
               >
-                <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 9, fontWeight: 700, color: '#3d2314', letterSpacing: 1 }}>LUMIÈRE</span>
+                <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 8, fontWeight: 700, color: '#3d2314', letterSpacing: 0.5 }}>WICK & GLOW</span>
                 <span style={{ fontSize: 7, color: '#7a5c4e', letterSpacing: 0.5 }}>SOY WAX</span>
               </div>
             </div>

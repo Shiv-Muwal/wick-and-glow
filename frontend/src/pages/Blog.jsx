@@ -34,7 +34,7 @@ export default function Blog() {
       <div className="pt-[160px] px-[60px] pb-[80px] 
 text-center 
 bg-[linear-gradient(135deg,var(--cream)_0%,var(--blush)_100%)]">
-        <h1 className=" font-['Playfair_Display',serif] text-[3rem] text-[var(--deep)]">The Lumière Journal</h1>
+        <h1 className=" font-['Playfair_Display',serif] text-[3rem] text-[var(--deep)]">The Wick &amp; Glow Journal</h1>
         <div className="flex items-center justify-center gap-[10px] mt-[12px] text-[0.82rem] text-[var(--light-text)]"><Link to="/" className="text-[var(--sage)] no-underline">Home</Link> / <span>Journal</span></div>
         <p style={{ marginTop: 16, color: 'var(--light-text)', fontSize: '0.95rem', maxWidth: 480, marginInline: 'auto' }}>
           Stories, rituals, and wisdom from the world of candles.

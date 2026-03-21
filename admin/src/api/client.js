@@ -34,8 +34,15 @@ export function fetchAdminState() {
   return adminApi('/api/admin/state');
 }
 
+/** Order IDs are like `#ORD-…` — query string avoids `#` in URL path (path often 404). */
+export function fetchAdminOrder(orderId) {
+  const q = new URLSearchParams({ id: orderId });
+  return adminApi(`/api/admin/orders/detail?${q.toString()}`);
+}
+
 export function patchOrderStatus(orderId, status) {
-  return adminApi(`/api/admin/orders/${encodeURIComponent(orderId)}`, {
+  const q = new URLSearchParams({ id: orderId });
+  return adminApi(`/api/admin/orders/detail?${q.toString()}`, {
     method: 'PATCH',
     body: JSON.stringify({ status }),
   });

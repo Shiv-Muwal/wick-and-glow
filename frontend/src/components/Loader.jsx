@@ -21,11 +21,11 @@ export default function Loader() {
           </div>
           <div className="loader-wick" />
           <div className="loader-body">
-            <div className="loader-label">LUMIÈRE</div>
+            <div className="loader-label">WICK &amp; GLOW</div>
           </div>
         </div>
       </div>
-      <div className="loader-text">Lumière</div>
+      <div className="loader-text">Wick &amp; Glow</div>
       <div className="loader-subtext">Handcrafted Candles</div>
     </div>
   );

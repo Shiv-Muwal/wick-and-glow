@@ -63,7 +63,7 @@ max-[1100px]:grid-cols-1 max-[1100px]:p-[30px]">
                 <div className="contact-icon">📧</div>
                 <div>
                   <h4>Email Us</h4>
-                  <p>hello@lumiere.in<br />orders@lumiere.in</p>
+                  <p>hello@wickandglow.com<br />orders@wickandglow.com</p>
                 </div>
               </div>
               <div className="contact-item">
@@ -77,7 +77,7 @@ max-[1100px]:grid-cols-1 max-[1100px]:p-[30px]">
                 <div className="contact-icon">📸</div>
                 <div>
                   <h4>Follow Us</h4>
-                  <p>@lumierecandles on Instagram<br />Join 45K+ candle lovers</p>
+                  <p>@wickandglow on Instagram<br />Join our community</p>
                 </div>
               </div>
             </div>
@@ -92,7 +92,7 @@ max-[1100px]:grid-cols-1 max-[1100px]:p-[30px]">
                     Do you offer bulk / corporate orders?
                   </summary>
                   <p className="mt-2 text-[0.85rem] leading-[1.6] text-lightText">
-                    Yes! We love creating custom candle sets for corporate gifting, weddings, and events. Email us at orders@lumiere.in for pricing.
+                    Yes! We love creating custom candle sets for corporate gifting, weddings, and events. Email us at orders@wickandglow.com for pricing.
                   </p>
                 </details>
                 <details className="cursor-pointer">
@@ -162,7 +162,7 @@ max-[1100px]:grid-cols-1 max-[1100px]:p-[30px]">
             <div className="mt-5 rounded-[24px] bg-white p-[42px] text-center">
             <div className="mb-[10px] text-[2rem]">📍</div>
             <p className="mb-[6px] font-semibold text-deep">
-              Lumière Studio — Bandra West, Mumbai
+              Wick &amp; Glow Studio — Bandra West, Mumbai
             </p>
             <p className="mb-[14px] text-[0.85rem] text-lightText">
               12 Artisan Lane, Mumbai 400050 · Open Mon–Sat 10am–7pm

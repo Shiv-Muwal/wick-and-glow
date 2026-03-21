@@ -3,7 +3,7 @@ import { useToast } from '../context/ToastContext';
 import { postNewsletter } from '../api/client';
 
 export default function Newsletter({
-  title = 'Join the Lumière Circle',
+  title = 'Join the Wick & Glow list',
   description = 'Get 10% off your first order, plus exclusive access to new scents, rituals, and candle care tips.',
 }) {
   const [email, setEmail] = useState('');

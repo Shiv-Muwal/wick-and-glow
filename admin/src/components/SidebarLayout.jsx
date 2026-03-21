@@ -17,7 +17,10 @@ const TITLE_MAP = {
 
 function SidebarLayout({ children }) {
   const location = useLocation();
-  const title = TITLE_MAP[location.pathname] || 'Dashboard';
+  const title =
+    location.pathname.startsWith('/orders/') && location.pathname !== '/orders'
+      ? 'Order details'
+      : TITLE_MAP[location.pathname] || 'Dashboard';
   const [collapsed, setCollapsed] = useState(false);
 
   return (

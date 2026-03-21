@@ -9,7 +9,7 @@ export default function WhyUs() {
   return (
     <section className="why-us">
       <div className="section-header">
-        <div className="section-eyebrow reveal">Why Lumière</div>
+        <div className="section-eyebrow reveal">Why Wick &amp; Glow</div>
         <h2 className="section-title reveal">Made with Intention</h2>
         <div className="section-line" />
       </div>

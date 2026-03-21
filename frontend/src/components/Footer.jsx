@@ -15,7 +15,7 @@ max-[768px]:grid-cols-1"
           
           <Link to="/" className="nav-logo text-[var(--cream)] mb-[20px] flex">
             <div className="logo-flame" />
-            Lumière
+            Wick &amp; Glow
           </Link>
           <p className="mt-4 text-[0.88rem] leading-[1.8] text-[rgba(247,237,226,0.6)] max-w-[260px]">
             Handcrafted candles made with natural soy wax and premium
@@ -119,6 +119,14 @@ hover:bg-[var(--gold)] hover:text-[var(--deep)]"
                 Contact
               </Link>
             </li>
+            <li>
+              <Link
+                className="text-[rgba(247,237,226,0.6)] no-underline text-[0.88rem] transition-colors duration-300 hover:text-[var(--gold)]"
+                to="/dashboard"
+              >
+                My account
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
@@ -127,44 +135,52 @@ hover:bg-[var(--gold)] hover:text-[var(--deep)]"
           </h4>
           <ul className="flex flex-col gap-3">
             <li>
-              <a
+              <Link
                 className="text-[rgba(247,237,226,0.6)] no-underline text-[0.88rem] transition-colors duration-300 hover:text-[var(--gold)]"
-                href="#"
+                to="/legal/faq"
               >
                 FAQ
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 className="text-[rgba(247,237,226,0.6)] no-underline text-[0.88rem] transition-colors duration-300 hover:text-[var(--gold)]"
-                href="#"
+                to="/legal/shipping"
               >
                 Shipping Policy
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 className="text-[rgba(247,237,226,0.6)] no-underline text-[0.88rem] transition-colors duration-300 hover:text-[var(--gold)]"
-                href="#"
+                to="/legal/returns"
               >
                 Returns
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 className="text-[rgba(247,237,226,0.6)] no-underline text-[0.88rem] transition-colors duration-300 hover:text-[var(--gold)]"
-                href="#"
+                to="/track-order"
               >
-                Track Order
-              </a>
+                Track order (guest)
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 className="text-[rgba(247,237,226,0.6)] no-underline text-[0.88rem] transition-colors duration-300 hover:text-[var(--gold)]"
-                href="#"
+                to="/dashboard"
+              >
+                My orders (signed in)
+              </Link>
+            </li>
+            <li>
+              <Link
+                className="text-[rgba(247,237,226,0.6)] no-underline text-[0.88rem] transition-colors duration-300 hover:text-[var(--gold)]"
+                to="/legal/candle-care"
               >
                 Candle Care
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
@@ -176,9 +192,9 @@ hover:bg-[var(--gold)] hover:text-[var(--deep)]"
             <li>
               <a
                 className="text-[rgba(247,237,226,0.6)] no-underline text-[0.88rem] transition-colors duration-300 hover:text-[var(--gold)]"
-                href="mailto:hello@lumiere.in"
+                href="mailto:hello@wickandglow.com"
               >
-                hello@lumiere.in
+                hello@wickandglow.com
               </a>
             </li>
             <li>
@@ -206,7 +222,17 @@ pt-[30px]
 flex items-center justify-between 
 text-[0.82rem] text-[rgba(247,237,226,0.4)]"
       >
-        <span>© 2024 Lumière Candle Co. All rights reserved.</span>
+        <span>
+          © {new Date().getFullYear()} Wick &amp; Glow. All rights reserved.
+          <span className="mx-2 opacity-50">·</span>
+          <Link to="/legal/privacy" className="text-[rgba(247,237,226,0.55)] hover:text-[var(--gold)] no-underline">
+            Privacy
+          </Link>
+          <span className="mx-2 opacity-50">·</span>
+          <Link to="/legal/terms" className="text-[rgba(247,237,226,0.55)] hover:text-[var(--gold)] no-underline">
+            Terms
+          </Link>
+        </span>
         <div className="flex gap-[10px] text-[1.5rem]">💳 🔒 ✅</div>
       </div>
     </footer>

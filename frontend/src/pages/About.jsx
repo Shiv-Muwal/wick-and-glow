@@ -20,8 +20,8 @@ export default function About() {
         <div className="about-content reveal">
           <div className="section-eyebrow">Our Story</div>
           <h1>Born from a <em style={{ fontStyle: 'italic', color: '#84a59d' }}>Flicker</em> of Passion</h1>
-          <p>Lumière began in a small Mumbai kitchen in 2019, when founder Kavya Nair couldn&apos;t find candles that were both truly natural and genuinely beautiful. She started making her own — slowly, intentionally, with love.</p>
-          <p>What started as a weekend hobby quickly grew into a movement. Word spread through social media, friends, and family. Each candle was different, each one carried a story. Today, Lumière serves over 12,000 customers across India.</p>
+          <p>Wick &amp; Glow began in a small Mumbai kitchen in 2019, when founder Kavya Nair couldn&apos;t find candles that were both truly natural and genuinely beautiful. She started making her own — slowly, intentionally, with love.</p>
+          <p>What started as a weekend hobby quickly grew into a movement. Word spread through social media, friends, and family. Each candle was different, each one carried a story. Today, Wick &amp; Glow serves customers across India.</p>
           <div style={{ display: 'flex', gap: 30, marginTop: 36, flexWrap: 'wrap' }}>
             <Link to="/shop" className="btn-primary">Shop Our Candles</Link>
             <Link to="/contact" className="btn-secondary">Get in Touch</Link>

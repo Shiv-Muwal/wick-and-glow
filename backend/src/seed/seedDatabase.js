@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import {
   Product,
   Customer,
@@ -5,13 +6,14 @@ import {
   Blog,
   Coupon,
   Review,
+  User,
 } from '../models/index.js';
 
 const SEED_PRODUCTS = [
   {
     _id: 'p1',
     name: 'Floral Clay Candle',
-    category: 'Floral',
+    category: 'Scented',
     fragrance: 'Rose Petal',
     price: 899,
     originalPrice: 1099,
@@ -40,7 +42,7 @@ const SEED_PRODUCTS = [
   {
     _id: 'p3',
     name: 'White Oudh Soy Candle',
-    category: 'Woody',
+    category: 'Luxury',
     fragrance: 'White Oudh',
     price: 1249,
     emoji: '🤍',
@@ -100,6 +102,17 @@ export async function seedIfEmpty() {
   if (count > 0) return;
 
   await Product.insertMany(SEED_PRODUCTS);
+
+  const demoHash = await bcrypt.hash('demo12345', 10);
+  try {
+    await User.create({
+      name: 'Demo Customer',
+      email: 'demo@wicknglow.com',
+      passwordHash: demoHash,
+    });
+  } catch {
+    /* duplicate */
+  }
 
   await Customer.insertMany([
     { name: 'Priya Sharma', email: 'priya@email.com', color: '#84a59d', ordersCount: 5, spend: 7250 },

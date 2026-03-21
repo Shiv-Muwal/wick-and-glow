@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAdmin } from '../AdminContext.jsx';
 import { ORDER_COLUMNS, ORDER_STATUS_OPTIONS } from '../ordersConfig.js';
 
@@ -63,7 +64,12 @@ function Orders() {
                 className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--surface2)]"
               >
                 <td className="px-[15px] py-[13px] align-middle text-[var(--text)]">
-                  {o.id}
+                  <Link
+                    to={`/orders/${encodeURIComponent(o.id)}`}
+                    className="font-mono text-[12.5px] font-semibold text-[var(--sage)] no-underline hover:underline"
+                  >
+                    {o.id}
+                  </Link>
                 </td>
                 <td className="px-[15px] py-[13px] align-middle text-[var(--text)]">
                   {o.customer}
@@ -73,6 +79,12 @@ function Orders() {
                 </td>
                 <td className="px-[15px] py-[13px] align-middle text-[var(--text)]">
                   ₹{o.amount.toLocaleString()}
+                </td>
+                <td className="px-[15px] py-[13px] align-middle text-[12px] text-[var(--text2)]">
+                  {o.pincode || '—'}
+                </td>
+                <td className="px-[15px] py-[13px] align-middle text-[11px] uppercase text-[var(--text2)]">
+                  {o.payment || '—'}
                 </td>
                 <td className="px-[15px] py-[13px] align-middle">
                   <select

@@ -1,20 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { getStockCap, isOutOfStock } from '../utils/stock';
 
 export default function QuickViewModal({ product, open, onClose }) {
   const [qty, setQty] = useState(1);
   const { addToCart } = useCart();
   const { showToast } = useToast();
 
+  useEffect(() => {
+    setQty(1);
+  }, [product?.id]);
+
   if (!product) return null;
 
+  const cap = getStockCap(product);
+  const out = isOutOfStock(product);
+
+  const clampQty = (n) => {
+    if (out) return 1;
+    return Math.min(Math.max(1, n), cap);
+  };
+
   const handleAdd = () => {
-    addToCart(product, qty);
+    if (out) {
+      showToast('Out of stock');
+      return;
+    }
+    const q = clampQty(qty);
+    const ok = addToCart(product, q);
+    if (!ok) {
+      showToast('Cannot add — check quantity in stock');
+      return;
+    }
     showToast(`${product.name} added to cart 🕯️`);
     setQty(1);
     onClose();
   };
+
+  const gradColor = product.color || '#f5cac3';
 
   return (
     <>
@@ -35,7 +59,7 @@ export default function QuickViewModal({ product, open, onClose }) {
               product.imageUrl
                 ? { padding: 0, overflow: 'hidden' }
                 : {
-                    background: `linear-gradient(135deg, ${product.color}, #f7ede2)`,
+                    background: `linear-gradient(135deg, ${gradColor}, #f7ede2)`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -44,7 +68,7 @@ export default function QuickViewModal({ product, open, onClose }) {
             }
           >
             {product.imageUrl ? (
-              <img src={product.imageUrl} alt="" className="h-full w-full object-cover" />
+              <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
             ) : (
               product.emoji
             )}
@@ -52,22 +76,39 @@ export default function QuickViewModal({ product, open, onClose }) {
           <div className="modal-info">
             <div className="modal-category">{product.category}</div>
             <h2 className="modal-name">{product.name}</h2>
-            <div className="modal-price">₹{product.price}</div>
+            <div className="modal-price">
+              ₹{product.price}
+              {product.originalPrice ? (
+                <span className="text-[0.9rem] line-through text-[var(--light-text)] ml-2">₹{product.originalPrice}</span>
+              ) : null}
+            </div>
+            {out ? <p className="text-[0.85rem] font-semibold text-red-800">Out of stock</p> : null}
+            {!out && cap < 999 && cap <= 10 ? (
+              <p className="text-[0.8rem] text-amber-900">Only {cap} left</p>
+            ) : null}
             <p className="modal-desc">{product.desc}</p>
             <div className="qty-selector">
               <label>Qty:</label>
-              <button type="button" className="qty-btn" onClick={() => setQty((n) => Math.max(1, n - 1))}>−</button>
+              <button type="button" className="qty-btn" disabled={out} onClick={() => setQty((n) => clampQty(n - 1))}>−</button>
               <input
                 type="number"
                 value={qty}
                 min={1}
-                onChange={(e) => setQty(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                max={out ? 1 : cap}
+                disabled={out}
+                onChange={(e) => setQty(clampQty(parseInt(e.target.value, 10) || 1))}
                 style={{ width: 50, textAlign: 'center', border: '1.5px solid #84a59d', borderRadius: 8, padding: 6, fontFamily: 'Poppins, sans-serif' }}
               />
-              <button type="button" className="qty-btn" onClick={() => setQty((n) => n + 1)}>+</button>
+              <button type="button" className="qty-btn" disabled={out || qty >= cap} onClick={() => setQty((n) => clampQty(n + 1))}>+</button>
             </div>
-            <button type="button" className="btn-primary add-cart modal-add-cart" style={{ width: '100%', marginTop: 8 }} onClick={handleAdd}>
-              Add to Cart 🕯️
+            <button
+              type="button"
+              className="btn-primary add-cart modal-add-cart"
+              style={{ width: '100%', marginTop: 8, opacity: out ? 0.55 : 1 }}
+              onClick={handleAdd}
+              disabled={out}
+            >
+              {out ? 'Sold out' : 'Add to Cart 🕯️'}
             </button>
           </div>
         </div>
