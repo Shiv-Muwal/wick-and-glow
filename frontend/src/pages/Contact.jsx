@@ -2,15 +2,28 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Newsletter from '../components/Newsletter';
 import { useToast } from '../context/ToastContext';
+import { postContact } from '../api/client';
 
 export default function Contact() {
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', subject: '', message: '' });
   const { showToast } = useToast();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    showToast("Message sent! We'll get back to you soon ✨");
-    setForm({ firstName: '', lastName: '', email: '', phone: '', subject: '', message: '' });
+    try {
+      await postContact({
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        phone: form.phone,
+        subject: form.subject,
+        message: form.message,
+      });
+      showToast("Message sent! We'll get back to you soon ✨");
+      setForm({ firstName: '', lastName: '', email: '', phone: '', subject: '', message: '' });
+    } catch {
+      showToast('Could not send message. Please try again later.');
+    }
   };
 
   const handleChange = (e) => {

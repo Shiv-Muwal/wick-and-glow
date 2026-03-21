@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useToast } from '../context/ToastContext';
+import { postNewsletter } from '../api/client';
 
 export default function Newsletter({
   title = 'Join the Lumière Circle',
@@ -8,11 +9,17 @@ export default function Newsletter({
   const [email, setEmail] = useState('');
   const { showToast } = useToast();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email.trim()) return;
-    showToast('Thank you for subscribing! 🕯️');
-    setEmail('');
+    try {
+      await postNewsletter(email.trim());
+      showToast('Thank you for subscribing! 🕯️');
+      setEmail('');
+    } catch {
+      showToast('Thank you for subscribing! 🕯️');
+      setEmail('');
+    }
   };
 
   return (

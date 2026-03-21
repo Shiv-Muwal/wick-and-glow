@@ -18,19 +18,23 @@ function Coupons() {
 
   const closeAddCoupon = () => setIsModalOpen(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const code = formData.code.trim().toUpperCase();
     const discount = Number(formData.discount);
 
     if (!code || !discount) return;
 
-    addCoupon({
-      code,
-      discount,
-      expiry: formData.expiry,
-    });
-    closeAddCoupon();
+    try {
+      await addCoupon({
+        code,
+        discount,
+        expiry: formData.expiry,
+      });
+      closeAddCoupon();
+    } catch {
+      /* duplicate code / network — modal stays open */
+    }
   };
 
   return (
@@ -83,7 +87,7 @@ function Coupons() {
               <div className="mt-[12px] flex items-center gap-[10px]">
                 <button
                   type="button"
-                  onClick={() => toggleCouponActive(c.id)}
+                  onClick={() => toggleCouponActive(c.id, !c.active)}
                   className={`rounded-[8px] border px-[12px] py-[6px] text-[12px] font-semibold transition-colors ${
                     c.active
                       ? 'border-[#dedede] bg-[#f8f8f8] text-[var(--text2)] hover:bg-[#efefef]'

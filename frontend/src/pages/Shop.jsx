@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
+import { getProducts } from '../api/client';
 import ProductCard from '../components/ProductCard';
 import QuickViewModal from '../components/QuickViewModal';
 import Newsletter from '../components/Newsletter';
@@ -11,6 +12,7 @@ const FRAGRANCES = ['Rose Petal', 'White Oudh', 'French Lavender', 'Jasmine', 'S
 
 export default function Shop() {
   useScrollReveal();
+  const [catalog, setCatalog] = useState(PRODUCTS);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState([]);
@@ -18,7 +20,22 @@ export default function Shop() {
   const [maxPrice, setMaxPrice] = useState(2000);
   const [sort, setSort] = useState('default');
 
-  const filtered = PRODUCTS.filter((p) => {
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getProducts();
+        if (!cancelled && Array.isArray(data) && data.length > 0) setCatalog(data);
+      } catch {
+        /* keep static PRODUCTS */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const filtered = catalog.filter((p) => {
     const term = search.trim().toLowerCase();
     const matchSearch =
       !term ||

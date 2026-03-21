@@ -31,15 +31,23 @@ export default function QuickViewModal({ product, open, onClose }) {
         <div className="modal-grid">
           <div
             className="modal-img"
-            style={{
-              background: `linear-gradient(135deg, ${product.color}, #f7ede2)`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '6rem',
-            }}
+            style={
+              product.imageUrl
+                ? { padding: 0, overflow: 'hidden' }
+                : {
+                    background: `linear-gradient(135deg, ${product.color}, #f7ede2)`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '6rem',
+                  }
+            }
           >
-            {product.emoji}
+            {product.imageUrl ? (
+              <img src={product.imageUrl} alt="" className="h-full w-full object-cover" />
+            ) : (
+              product.emoji
+            )}
           </div>
           <div className="modal-info">
             <div className="modal-category">{product.category}</div>

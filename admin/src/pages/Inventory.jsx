@@ -23,11 +23,11 @@ function Inventory() {
     setActiveProduct(null);
   };
 
-  const handleSubmitRestock = (e) => {
+  const handleSubmitRestock = async (e) => {
     if (e?.preventDefault) e.preventDefault();
     const qtyNum = Number(restockQty);
     if (!activeProduct || Number.isNaN(qtyNum) || qtyNum <= 0) return;
-    restockProduct(activeProduct.id, qtyNum);
+    await restockProduct(activeProduct.id, qtyNum);
     setRestockOpen(false);
     setActiveProduct(null);
   };

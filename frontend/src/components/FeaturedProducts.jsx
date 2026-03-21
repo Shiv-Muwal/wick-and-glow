@@ -1,12 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
+import { getProducts } from '../api/client';
 import ProductCard from './ProductCard';
 import QuickViewModal from './QuickViewModal';
 
 export default function FeaturedProducts() {
   const [quickViewProduct, setQuickViewProduct] = useState(null);
-  const featured = PRODUCTS.slice(0, 4);
+  const [list, setList] = useState(PRODUCTS.slice(0, 4));
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getProducts();
+        if (!cancelled && Array.isArray(data) && data.length > 0) {
+          setList(data.slice(0, 4));
+        }
+      } catch {
+        /* static slice */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <>
@@ -17,7 +35,7 @@ export default function FeaturedProducts() {
           <div className="section-line" />
         </div>
         <div className="products-grid">
-          {featured.map((p) => (
+          {list.map((p) => (
             <ProductCard key={p.id} product={p} onQuickView={setQuickViewProduct} />
           ))}
         </div>

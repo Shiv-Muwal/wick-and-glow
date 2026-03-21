@@ -1,8 +1,10 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Newsletter from '../components/Newsletter';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { getBlogs } from '../api/client';
 
-const POSTS = [
+const FALLBACK = [
   { tag: 'Wellness', title: 'Benefits of Soy Candles Over Paraffin', excerpt: 'Natural soy wax burns cleaner, lasts longer...', date: 'Nov 28, 2024', emoji: '🌿' },
   { tag: 'Aromatherapy', title: 'Best Candle Scents for Relaxation', excerpt: 'Lavender, chamomile, sandalwood, vanilla...', date: 'Nov 15, 2024', emoji: '💜' },
   { tag: 'Home Decor', title: 'Home Decor with Candles: 8 Styling Ideas', excerpt: 'Candles are the most versatile décor element...', date: 'Nov 3, 2024', emoji: '🏠' },
@@ -10,6 +12,22 @@ const POSTS = [
 
 export default function Blog() {
   useScrollReveal();
+  const [posts, setPosts] = useState(FALLBACK);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getBlogs();
+        if (!cancelled && Array.isArray(data) && data.length > 0) setPosts(data);
+      } catch {
+        /* FALLBACK */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <>
@@ -29,14 +47,31 @@ gap-[30px]
 px-[60px] pb-[100px] 
 max-[1100px]:grid-cols-2 max-[1100px]:px-[30px] max-[1100px]:pb-[80px] 
 max-[768px]:grid-cols-1">
-        {POSTS.map((post) => (
-          <article key={post.title} className="bg-white rounded-[20px] overflow-hidden 
+        {posts.map((post) => (
+          <article key={post.id || post.title} className="bg-white rounded-[20px] overflow-hidden 
 shadow-[var(--shadow)] 
 transition 
 cursor-pointer 
 hover:-translate-y-[8px] hover:shadow-[var(--shadow-hover)] reveal">
-            <div className="h-[220px] overflow-hidden bg-[var(--blush)]" style={{ background: `linear-gradient(135deg,var(--blush),#e8b4a0)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '5rem' }}>
-              {post.emoji}
+            <div
+              className="h-[220px] overflow-hidden bg-[var(--blush)]"
+              style={
+                post.coverImageUrl
+                  ? {}
+                  : {
+                      background: `linear-gradient(135deg,var(--blush),#e8b4a0)`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '5rem',
+                    }
+              }
+            >
+              {post.coverImageUrl ? (
+                <img src={post.coverImageUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
+              ) : (
+                post.emoji
+              )}
             </div>
             <div className="pt-[28px]">
               <span className="inline-block 
@@ -55,7 +90,7 @@ leading-[1.4]">{post.title}</h3>
               <div className="flex items-center justify-between 
 text-[0.78rem] text-[var(--light-text)]">
                 <span>{post.date}</span>
-                <a href="#" className="text-[var(--sage)] no-underline font-semibold text-[0.82rem]">Read More →</a>
+                <span className="text-[var(--sage)] font-semibold text-[0.82rem]">Read More →</span>
               </div>
             </div>
           </article>

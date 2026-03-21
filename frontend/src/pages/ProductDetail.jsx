@@ -1,16 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
+import { getProduct } from '../api/client';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import Newsletter from '../components/Newsletter';
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const product = PRODUCTS.find((p) => p.id === id);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState(1);
   const { addToCart } = useCart();
   const { showToast } = useToast();
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    (async () => {
+      try {
+        const p = await getProduct(id);
+        if (!cancelled) setProduct(p);
+      } catch {
+        const local = PRODUCTS.find((p) => p.id === id);
+        if (!cancelled) setProduct(local || null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  useEffect(() => {
+    setQty(1);
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="product-detail px-[60px] py-[120px] text-center text-[var(--light-text)]">
+        Loading…
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -26,8 +59,6 @@ export default function ProductDetail() {
     showToast(`${product.name} added to cart 🕯️`);
   };
 
-  const related = PRODUCTS.filter((p) => p.id !== id).slice(0, 3);
-
   return (
     <>
       <div className="product-detail">
@@ -37,10 +68,26 @@ export default function ProductDetail() {
 
         <div className="product-detail-grid">
           <div className="product-gallery reveal">
-            <div className="main-image" style={{ background: `linear-gradient(135deg,${product.color},#f7ede2)` }}>
-              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10rem' }}>
-                {product.emoji}
-              </div>
+            <div
+              className="main-image"
+              style={
+                product.imageUrl
+                  ? { padding: 0, overflow: 'hidden' }
+                  : { background: `linear-gradient(135deg,${product.color || '#f5cac3'},#f7ede2)` }
+              }
+            >
+              {product.imageUrl ? (
+                <img
+                  src={product.imageUrl}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  style={{ minHeight: '100%' }}
+                />
+              ) : (
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10rem' }}>
+                  {product.emoji}
+                </div>
+              )}
             </div>
           </div>
 

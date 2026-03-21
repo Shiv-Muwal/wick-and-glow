@@ -43,6 +43,8 @@ export function CartProvider({ children }) {
     });
   };
 
+  const clearCart = () => setCart([]);
+
   const cartCount = cart.reduce((s, i) => s + i.qty, 0);
   const cartTotal = cart.reduce((s, i) => s + parseInt(i.price) * i.qty, 0);
 
@@ -55,6 +57,7 @@ export function CartProvider({ children }) {
         addToCart,
         removeFromCart,
         changeQty,
+        clearCart,
       }}
     >
       {children}

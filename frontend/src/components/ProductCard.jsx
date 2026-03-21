@@ -42,10 +42,19 @@ export default function ProductCard({ product, onQuickView }) {
 
   return (
     <Link to={`/product/${product.id}`} className="product-card reveal">
-      <div className={`product-image ${product.imageClass || ''}`}>
-        <div className="flex h-full items-center justify-center text-[6rem]">
-          {product.emoji}
-        </div>
+      <div className={`product-image ${product.imageUrl ? '' : product.imageClass || ''}`}>
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt=""
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-[6rem]">
+            {product.emoji}
+          </div>
+        )}
         {product.badge ? (
           <span className={`product-badge ${badgeClass} ${badgeTone}`}>
             {badgeLabelMap[product.badge] || product.badge}

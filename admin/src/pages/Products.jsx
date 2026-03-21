@@ -2,11 +2,13 @@ import React, { useMemo, useState } from 'react';
 import { useAdmin } from '../AdminContext.jsx';
 import { SearchIcon } from '../components/logos.jsx';
 import { PRODUCT_COLUMNS, PRODUCT_CATEGORIES } from '../productsConfig.js';
+import { uploadProductImage } from '../api/client.js';
 
 function Products() {
-  const { state } = useAdmin();
+  const { state, refreshState } = useAdmin();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
+  const [uploadingId, setUploadingId] = useState(null);
 
   const filtered = useMemo(() => {
     return state.products.filter((p) => {
@@ -19,6 +21,21 @@ function Products() {
     });
   }, [state.products, search, category]);
 
+  const handleImageChange = async (productId, e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploadingId(productId);
+    try {
+      await uploadProductImage(productId, file);
+      await refreshState();
+    } catch (err) {
+      window.alert(err.message || 'Upload failed');
+    } finally {
+      setUploadingId(null);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-[18px]">
       {/* Header */}
@@ -28,7 +45,7 @@ function Products() {
             Products
           </h2>
           <p className="mt-[2px] text-[12.5px] text-[var(--text2)]">
-            Manage your candle collection
+            Manage your candle collection · Cloudinary image upload per row
           </p>
         </div>
         <button
@@ -90,8 +107,24 @@ function Products() {
                   className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--surface2)]"
                 >
                   <td className="px-[15px] py-[13px] align-middle">
-                    <div className="flex h-[42px] w-[42px] items-center justify-center rounded-[10px] bg-gradient-to-br from-[var(--cream)] to-[var(--blush)] text-[20px]">
-                      {p.emoji}
+                    <div className="flex flex-col items-start gap-[6px]">
+                      <div className="flex h-[42px] w-[42px] items-center justify-center overflow-hidden rounded-[10px] bg-gradient-to-br from-[var(--cream)] to-[var(--blush)] text-[20px]">
+                        {p.imageUrl ? (
+                          <img src={p.imageUrl} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          p.emoji
+                        )}
+                      </div>
+                      <label className="cursor-pointer text-[10px] font-semibold text-[var(--sage)] hover:underline">
+                        {uploadingId === p.id ? 'Uploading…' : 'Upload image'}
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/gif"
+                          className="hidden"
+                          disabled={uploadingId === p.id}
+                          onChange={(e) => handleImageChange(p.id, e)}
+                        />
+                      </label>
                     </div>
                   </td>
                   <td className="px-[15px] py-[13px] align-middle">
@@ -128,4 +161,3 @@ function Products() {
 }
 
 export default Products;
-

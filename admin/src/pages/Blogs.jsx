@@ -1,8 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAdmin } from '../AdminContext.jsx';
+import { uploadBlogCover } from '../api/client.js';
 
 function Blogs() {
-  const { state } = useAdmin();
+  const { state, toggleBlogPublished, removeBlog, refreshState } = useAdmin();
+  const [uploadingBlogId, setUploadingBlogId] = useState(null);
+
+  const handleCoverUpload = async (blogId, e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploadingBlogId(blogId);
+    try {
+      await uploadBlogCover(blogId, file);
+      await refreshState();
+    } catch (err) {
+      window.alert(err.message || 'Upload failed');
+    } finally {
+      setUploadingBlogId(null);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-[18px]">
@@ -34,8 +51,12 @@ function Blogs() {
             key={b.id}
             className="flex h-full min-w-[260px] flex-1 basis-[calc(33.333%-12px)] flex-col overflow-hidden rounded-[16px] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow)] transition-transform hover:-translate-y-[3px] hover:shadow-[var(--shadow-lg)]"
           >
-            <div className="flex h-[130px] items-center justify-center bg-gradient-to-br from-[var(--cream)] via-[var(--blush)] to-[var(--sage)] text-[38px]">
-              {b.emoji}
+            <div className="relative flex h-[130px] items-center justify-center overflow-hidden bg-gradient-to-br from-[var(--cream)] via-[var(--blush)] to-[var(--sage)] text-[38px]">
+              {b.coverImageUrl ? (
+                <img src={b.coverImageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              ) : (
+                b.emoji
+              )}
             </div>
             <div className="flex flex-1 flex-col px-[15px] py-[12px]">
               <div className="font-['DM_Serif_Display',serif] text-[15px] text-[var(--text)]">
@@ -57,7 +78,17 @@ function Blogs() {
                 {b.excerpt}
               </div>
             </div>
-            <div className="flex items-center gap-[7px] border-t border-[var(--border)] bg-[var(--surface2)] px-[15px] py-[10px]">
+            <div className="flex flex-wrap items-center gap-[7px] border-t border-[var(--border)] bg-[var(--surface2)] px-[15px] py-[10px]">
+              <label className="inline-flex cursor-pointer items-center gap-[6px] rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-[12px] py-[6px] text-[12px] text-[var(--text2)] transition-colors hover:border-[var(--sage)] hover:text-[var(--sage)]">
+                {uploadingBlogId === b.id ? '…' : '🖼 Cover'}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="hidden"
+                  disabled={uploadingBlogId === b.id}
+                  onChange={(e) => handleCoverUpload(b.id, e)}
+                />
+              </label>
               <button
                 type="button"
                 className="inline-flex items-center gap-[6px] rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-[12px] py-[6px] text-[12px] text-[var(--text2)] transition-colors hover:border-[var(--sage)] hover:text-[var(--sage)]"
@@ -66,12 +97,16 @@ function Blogs() {
               </button>
               <button
                 type="button"
+                onClick={() => {
+                  if (window.confirm('Delete this post?')) removeBlog(b.id);
+                }}
                 className="inline-flex h-[30px] w-[30px] items-center justify-center rounded-[8px] border border-[rgba(239,68,68,0.2)] bg-[rgba(239,68,68,0.08)] text-[13px] text-[#dc2626] transition-colors hover:bg-[#dc2626] hover:text-white"
               >
                 🗑️
               </button>
               <button
                 type="button"
+                onClick={() => toggleBlogPublished(b.id, !b.published)}
                 className={`ml-auto inline-flex items-center gap-[6px] rounded-[8px] px-[12px] py-[6px] text-[12px] font-medium transition-colors ${
                   b.published
                     ? 'border border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] hover:border-[var(--sage)] hover:text-[var(--sage)]'
