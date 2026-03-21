@@ -31,8 +31,8 @@ export default function ProductDetail() {
   return (
     <>
       <div className="product-detail">
-        <div className="breadcrumb" style={{ marginBottom: 40 }}>
-          <Link to="/">Home</Link> / <Link to="/shop">Shop</Link> / <span>{product.name}</span>
+        <div className="flex items-center justify-center gap-[10px] mt-[12px] text-[0.82rem] text-[var(--light-text)]" style={{ marginBottom: 40 }}>
+          <Link to="/">Home</Link> / <Link to="/shop"  className="text-[var(--sage)] no-underline">Shop</Link> / <span>{product.name}</span>
         </div>
 
         <div className="product-detail-grid">

@@ -46,10 +46,12 @@ export default function Shop() {
 
   return (
     <>
-      <div className="shop-hero">
-        <h1>Our Collection</h1>
-        <div className="breadcrumb">
-          <Link to="/">Home</Link> / <span>Shop</span>
+      <div className="pt-[160px] px-[60px] pb-[80px] 
+text-center 
+bg-[linear-gradient(135deg,var(--cream)_0%,var(--blush)_100%)]">
+        <h1 className="font-['Playfair_Display',serif] text-[3rem] text-[var(--deep)]">Our Collection</h1>
+        <div className="flex items-center justify-center gap-[10px] mt-[12px] text-[0.82rem] text-[var(--light-text)]">
+          <Link to="/" className="text-[var(--sage)] no-underline">Home</Link> / <span>Shop</span>
         </div>
       </div>
 
@@ -63,7 +65,12 @@ export default function Shop() {
         />
       </div>
 
-      <div className="shop-layout">
+      <div className="grid 
+grid-cols-[260px_1fr] 
+gap-[40px] 
+p-[60px] 
+items-start 
+max-[1100px]:grid-cols-1">
         <aside className="filters">
           <div className="filter-card">
             <h4>Categories</h4>

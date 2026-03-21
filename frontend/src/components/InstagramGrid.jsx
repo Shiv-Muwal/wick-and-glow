@@ -8,9 +8,9 @@ export default function InstagramGrid() {
         <h2 className="section-title reveal">Follow the Glow</h2>
         <div className="section-line" />
       </div>
-      <div className="instagram-grid" style={{ marginTop: 40 }}>
+      <div className="grid grid-cols-6 gap-[4px] max-[1100px]:grid-cols-3 max-[768px]:grid-cols-2" style={{ marginTop: 40 }}>
         {ITEMS.map((emoji) => (
-          <div key={emoji} className="insta-item">
+          <div key={emoji} className="aspect-square overflow-hidden bg-[var(--blush)] relative cursor-none">
             <div className="insta-placeholder">{emoji}</div>
             <div className="insta-overlay">📷</div>
           </div>

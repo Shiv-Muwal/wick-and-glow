@@ -26,8 +26,9 @@ export default function CartSidebar({ open, onClose }) {
         aria-label="Close cart"
       />
       <div className={`cart-sidebar ${open ? 'open' : ''}`}>
-        <div className="cart-header">
-          <h3>Your Cart 🕯️</h3>
+        <div className="p-[30px] border-b border-[rgba(132,165,157,0.2)] 
+flex items-center justify-between">
+          <h3 className="font-['Playfair_Display',serif] text-[1.4rem] text-[var(--deep)]">Your Cart 🕯️</h3>
           <button type="button" className="cart-close" onClick={onClose}>✕</button>
         </div>
         <div className="cart-items">

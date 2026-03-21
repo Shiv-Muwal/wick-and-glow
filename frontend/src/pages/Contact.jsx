@@ -19,16 +19,22 @@ export default function Contact() {
 
   return (
     <>
-      <div className="shop-hero">
-        <h1>Get in Touch</h1>
-        <div className="breadcrumb"><Link to="/">Home</Link> / <span>Contact</span></div>
+      <div className="pt-[160px] px-[60px] pb-[80px] 
+text-center 
+bg-[linear-gradient(135deg,var(--cream)_0%,var(--blush)_100%)]">
+        <h1 className=" font-['Playfair_Display',serif] text-[3rem] text-[var(--deep)]">Get in Touch</h1>
+        <div className="flex items-center justify-center gap-[10px] mt-[12px] text-[0.82rem] text-[var(--light-text)]"><Link to="/" className="text-[var(--sage)] no-underline">Home</Link> / <span>Contact</span></div>
         <p className="mt-4 text-[0.95rem] text-lightText">
           We&apos;d love to hear from you. Whether it&apos;s a question, a custom order, or just to say hello.
         </p>
       </div>
 
       <section className="px-0 pb-[100px] pt-[60px]">
-        <div className="contact-layout">
+        <div className="grid 
+grid-cols-[1fr_1.5fr] 
+gap-[60px] 
+p-[60px] 
+max-[1100px]:grid-cols-1 max-[1100px]:p-[30px]">
           <div className="reveal">
             <h2>Let&apos;s Start a Conversation</h2>
             <p>Whether you have a question about our candles, need help with an order, or want to explore custom gifting options — our team is here to help.</p>

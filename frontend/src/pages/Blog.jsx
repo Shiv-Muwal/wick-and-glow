@@ -13,27 +13,49 @@ export default function Blog() {
 
   return (
     <>
-      <div className="shop-hero">
-        <h1>The Lumière Journal</h1>
-        <div className="breadcrumb"><Link to="/">Home</Link> / <span>Journal</span></div>
+      <div className="pt-[160px] px-[60px] pb-[80px] 
+text-center 
+bg-[linear-gradient(135deg,var(--cream)_0%,var(--blush)_100%)]">
+        <h1 className=" font-['Playfair_Display',serif] text-[3rem] text-[var(--deep)]">The Lumière Journal</h1>
+        <div className="flex items-center justify-center gap-[10px] mt-[12px] text-[0.82rem] text-[var(--light-text)]"><Link to="/" className="text-[var(--sage)] no-underline">Home</Link> / <span>Journal</span></div>
         <p style={{ marginTop: 16, color: 'var(--light-text)', fontSize: '0.95rem', maxWidth: 480, marginInline: 'auto' }}>
           Stories, rituals, and wisdom from the world of candles.
         </p>
       </div>
 
-      <div className="blog-grid">
+      <div className="grid 
+grid-cols-3 
+gap-[30px] 
+px-[60px] pb-[100px] 
+max-[1100px]:grid-cols-2 max-[1100px]:px-[30px] max-[1100px]:pb-[80px] 
+max-[768px]:grid-cols-1">
         {POSTS.map((post) => (
-          <article key={post.title} className="blog-card reveal">
-            <div className="blog-img" style={{ background: `linear-gradient(135deg,var(--blush),#e8b4a0)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '5rem' }}>
+          <article key={post.title} className="bg-white rounded-[20px] overflow-hidden 
+shadow-[var(--shadow)] 
+transition 
+cursor-pointer 
+hover:-translate-y-[8px] hover:shadow-[var(--shadow-hover)] reveal">
+            <div className="h-[220px] overflow-hidden bg-[var(--blush)]" style={{ background: `linear-gradient(135deg,var(--blush),#e8b4a0)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '5rem' }}>
               {post.emoji}
             </div>
-            <div className="blog-content">
-              <span className="blog-tag">{post.tag}</span>
-              <h3 className="blog-title">{post.title}</h3>
-              <p className="blog-excerpt">{post.excerpt}</p>
-              <div className="blog-meta">
+            <div className="pt-[28px]">
+              <span className="inline-block 
+bg-[rgba(132,165,157,0.15)] 
+text-[var(--sage)] 
+px-[12px] py-[4px] 
+rounded-[20px] 
+text-[0.72rem] font-semibold tracking-[1px] uppercase 
+mb-[14px]">{post.tag}</span>
+              <h3 className="font-['Playfair_Display',serif] 
+text-[1.2rem] 
+text-[var(--deep)] 
+mb-[12px] 
+leading-[1.4]">{post.title}</h3>
+              <p className="text-[0.87rem] text-[var(--light-text)] leading-[1.7] mb-[20px]">{post.excerpt}</p>
+              <div className="flex items-center justify-between 
+text-[0.78rem] text-[var(--light-text)]">
                 <span>{post.date}</span>
-                <a href="#" className="read-more">Read More →</a>
+                <a href="#" className="text-[var(--sage)] no-underline font-semibold text-[0.82rem]">Read More →</a>
               </div>
             </div>
           </article>
