@@ -7,6 +7,7 @@ import {
 } from '../models/index.js';
 import { formatBlogDate } from '../utils/transforms.js';
 import * as products from '../controllers/productController.js';
+import { sendNewsletterWelcome } from '../lib/mailer.js';
 
 export function publicRouter() {
   const r = Router();
@@ -77,15 +78,21 @@ export function publicRouter() {
       const email = String(req.body?.email || '')
         .trim()
         .toLowerCase();
-      if (!email || !email.includes('@')) {
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return res.status(400).json({ error: 'Valid email required' });
       }
+
       try {
         await NewsletterSubscriber.create({ email });
-      } catch {
-        /* duplicate */
+      } catch (e) {
+        if (e?.code === 11000) {
+          return res.status(200).json({ ok: true, alreadySubscribed: true });
+        }
+        throw e;
       }
-      res.status(201).json({ ok: true });
+
+      const { sent: emailSent } = await sendNewsletterWelcome(email);
+      res.status(201).json({ ok: true, emailSent });
     } catch (e) {
       next(e);
     }

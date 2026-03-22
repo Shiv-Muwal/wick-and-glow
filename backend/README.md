@@ -23,14 +23,21 @@ On first connection, if the `products` collection is empty, the server **seeds**
 
 | Variable | Description |
 |----------|-------------|
-| `PORT` | Default `3000` |
-| `MONGODB_URI` | e.g. `mongodb://127.0.0.1:27017/wicknglow` or Atlas connection string |
-| `ADMIN_API_KEY` | Bearer / `x-api-key` for `/api/admin/*` (default `dev-admin-key` if unset) |
+| `PORT` | Default `3000` — set storefront/admin `VITE_API_URL` to the same host:port |
+| `MONGODB_URI` | Local or Atlas; include DB name in path, e.g. `.../wicknglow?...` (`MONGO_URI` also read as alias) |
+| `JWT_SECRET` | Signs customer JWTs; use a long random string in production |
+| `JWT_EXPIRE` | Optional, default `7d` (`jsonwebtoken` `expiresIn` format) |
+| `ADMIN_API_KEY` | Bearer / `x-api-key` for `/api/admin/*` (default `dev-admin-key` if unset). Match **admin** `VITE_ADMIN_API_KEY` |
 | `CLOUDINARY_CLOUD_NAME` | From Cloudinary dashboard |
 | `CLOUDINARY_API_KEY` | From Cloudinary dashboard |
 | `CLOUDINARY_API_SECRET` | From Cloudinary dashboard |
+| `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASS` | Nodemailer (e.g. Gmail + [App Password](https://support.google.com/accounts/answer/185833)); required to send **newsletter welcome** emails |
+| `EMAIL_FROM` | Optional `From` header, e.g. `Wick & Glow <you@gmail.com>` |
+| `NEWSLETTER_WELCOME_CODE` | Optional coupon code text in the welcome email body |
 
 If Cloudinary vars are missing, the API still runs; **image upload** routes return `503` until you add them.
+
+Newsletter `POST /api/newsletter` still saves subscribers without email vars; the response includes `emailSent: false` until SMTP is configured.
 
 ## Auth (store customers)
 

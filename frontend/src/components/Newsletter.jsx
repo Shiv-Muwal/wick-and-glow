@@ -7,18 +7,29 @@ export default function Newsletter({
   description = 'Get 10% off your first order, plus exclusive access to new scents, rituals, and candle care tips.',
 }) {
   const [email, setEmail] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const { showToast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim() || submitting) return;
+    setSubmitting(true);
     try {
-      await postNewsletter(email.trim());
-      showToast('Thank you for subscribing! 🕯️');
+      const data = await postNewsletter(email.trim());
+      if (data?.alreadySubscribed) {
+        showToast("You are already on the list — thank you!");
+      } else if (data?.emailSent === false) {
+        showToast(
+          "You are subscribed! We could not send the welcome email yet — check that EMAIL_* is set on the server."
+        );
+      } else {
+        showToast('Check your inbox for a welcome email from Wick & Glow.');
+      }
       setEmail('');
-    } catch {
-      showToast('Thank you for subscribing! 🕯️');
-      setEmail('');
+    } catch (err) {
+      showToast(err?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -43,11 +54,17 @@ border-none outline-none
 font-['Poppins',sans-serif] text-[0.9rem] 
 bg-transparent"
         />
-        <button type="submit"  className="bg-[var(--deep)] text-[var(--cream)] 
+        <button
+          type="submit"
+          disabled={submitting}
+          className="bg-[var(--deep)] text-[var(--cream)] 
 border-none px-[32px] py-[18px] 
 text-[0.82rem] font-semibold tracking-[1px] uppercase 
-cursor-none transition 
-hover:bg-[var(--gold)] hover:text-[var(--deep)]">Subscribe</button>
+transition disabled:cursor-not-allowed disabled:opacity-60
+hover:bg-[var(--gold)] hover:text-[var(--deep)]"
+        >
+          {submitting ? 'Sending…' : 'Subscribe'}
+        </button>
       </form>
     </div>
   );

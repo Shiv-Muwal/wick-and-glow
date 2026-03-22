@@ -13,7 +13,10 @@ import { configureCloudinary } from './lib/cloudinary.js';
 import { errorMiddleware } from './middleware/errorMiddleware.js';
 
 const PORT = Number(process.env.PORT) || 3000;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/wicknglow';
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  process.env.MONGO_URI ||
+  'mongodb://127.0.0.1:27017/wicknglow';
 
 const cloudinaryReady = configureCloudinary();
 

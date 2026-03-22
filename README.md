@@ -20,11 +20,18 @@ Create `backend/.env` (see `backend/.env.example` if present):
 
 | Variable | Description |
 |----------|-------------|
-| `MONGODB_URI` | e.g. `mongodb://127.0.0.1:27017/wicknglow` |
+| `MONGODB_URI` | Local or Atlas, e.g. `mongodb://127.0.0.1:27017/wicknglow` or `.../wicknglow?...` (`MONGO_URI` also works) |
 | `JWT_SECRET` | Long random string for signing user tokens |
 | `PORT` | API port (default `3000`) |
 | `ADMIN_API_KEY` | Admin panel API key (optional in dev) |
 | Cloudinary vars | Optional; for admin image uploads |
+
+### Admin (`admin/.env` optional)
+
+| Variable | Description |
+|----------|-------------|
+| `VITE_API_URL` | Same as API, e.g. `http://localhost:3000` |
+| `VITE_ADMIN_API_KEY` | Must match backend `ADMIN_API_KEY` |
 
 ### Frontend (`frontend/.env`)
 
@@ -86,7 +93,7 @@ Open `http://localhost:5173`. The Vite dev server proxies or uses `VITE_API_URL`
 
 ## Admin panel
 
-Separate Vite app under `admin/` — uses `/api/admin` with `x-admin-key` / configured admin key.
+Separate Vite app under `admin/` — calls `/api/admin` with `Authorization: Bearer <ADMIN_API_KEY>` (or header `x-api-key`). Set `VITE_ADMIN_API_KEY` to the same value as `ADMIN_API_KEY` in `backend/.env`.
 
 ## API quick reference
 
