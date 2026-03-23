@@ -428,6 +428,26 @@ export function adminRouter() {
     }
   });
 
+  r.get('/blogs/:id', async (req, res, next) => {
+    try {
+      const blog = await Blog.findById(req.params.id).lean();
+      if (!blog) return res.status(404).json({ error: 'Not found' });
+      res.json({
+        id: String(blog._id),
+        title: blog.title,
+        date: blog.date,
+        published: !!blog.published,
+        excerpt: blog.excerpt || '',
+        emoji: blog.emoji || '🕯️',
+        tag: blog.tag || 'Journal',
+        content: blog.content || '',
+        coverImageUrl: blog.coverImageUrl || '',
+      });
+    } catch (e) {
+      next(e);
+    }
+  });
+
   r.post('/blogs', async (req, res, next) => {
     try {
       const b = req.body || {};
@@ -450,6 +470,7 @@ export function adminRouter() {
         excerpt: row.excerpt,
         emoji: row.emoji,
         tag: row.tag,
+        coverImageUrl: row.coverImageUrl || '',
       });
     } catch (e) {
       next(e);

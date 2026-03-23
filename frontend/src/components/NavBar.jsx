@@ -3,14 +3,11 @@ import { NavLink, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 // Phase 2: auth navbar uncomment karte waqt yeh import wapas lagao
 // import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
-
 export default function NavBar({ onCartOpen }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { cartCount } = useCart();
   // Phase 2: const { user, logout, ready } = useAuth();
-  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 60);
@@ -112,9 +109,6 @@ export default function NavBar({ onCartOpen }) {
             </>
           )}
           */}
-          <button type="button" className="dark-toggle" onClick={toggleTheme}>
-            {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
-          </button>
           <button type="button" className="cart-btn" title="Cart" onClick={onCartOpen}>
             🛒 <span className="cart-count">{cartCount}</span>
           </button>

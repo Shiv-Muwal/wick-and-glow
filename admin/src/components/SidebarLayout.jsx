@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { clearAdminSessionToken } from '../api/client.js';
 import { LogoutIcon, SearchIcon, BellIcon } from './logos.jsx';
 import { MAIN_LINKS, CONTENT_LINKS, SYSTEM_LINKS } from '../sidebarLinks.js';
 
@@ -17,6 +18,7 @@ const TITLE_MAP = {
 
 function SidebarLayout({ children }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const title =
     location.pathname.startsWith('/orders/') && location.pathname !== '/orders'
       ? 'Order details'
@@ -154,7 +156,8 @@ function SidebarLayout({ children }) {
             type="button"
             className="flex w-full items-center gap-[11px] rounded-[10px] px-[10px] py-[11px] text-[13.5px] font-medium text-[#ef4444] transition-colors hover:bg-[var(--sidebar-hover)]"
             onClick={() => {
-              // placeholder logout click
+              clearAdminSessionToken();
+              navigate('/login', { replace: true });
             }}
           >
             <LogoutIcon className="nav-icon text-[#ef4444]" />

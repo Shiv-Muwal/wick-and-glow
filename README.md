@@ -16,7 +16,7 @@ React (Vite) + Tailwind storefront, Node.js + Express + MongoDB (Mongoose) API, 
 
 ### Backend (`backend/.env`)
 
-Create `backend/.env` (see `backend/.env.example` if present):
+Create `backend/.env` in that folder and set real values (file is gitignored):
 
 | Variable | Description |
 |----------|-------------|

@@ -1,11 +1,56 @@
 const BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const KEY = import.meta.env.VITE_ADMIN_API_KEY || 'dev-admin-key';
+const SESSION_KEY = 'wickglow_admin_jwt';
+
+export function getAdminSessionToken() {
+  try {
+    return localStorage.getItem(SESSION_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setAdminSessionToken(token) {
+  try {
+    if (token) localStorage.setItem(SESSION_KEY, token);
+    else localStorage.removeItem(SESSION_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function clearAdminSessionToken() {
+  setAdminSessionToken(null);
+}
+
+function bearerForAdmin() {
+  return getAdminSessionToken() || KEY;
+}
 
 function authHeaders() {
   return {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${KEY}`,
+    Authorization: `Bearer ${bearerForAdmin()}`,
   };
+}
+
+export async function postAdminLogin(email, password) {
+  const r = await fetch(`${BASE}/api/admin/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+  const text = await r.text();
+  let data = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    /* ignore */
+  }
+  if (!r.ok) {
+    throw new Error(data?.error || r.statusText || 'Login failed');
+  }
+  return data;
 }
 
 async function parseJsonSafe(r) {
@@ -67,12 +112,23 @@ export function deleteCouponApi(id) {
   return adminApi(`/api/admin/coupons/${id}`, { method: 'DELETE' });
 }
 
+export function fetchBlogApi(id) {
+  return adminApi(`/api/admin/blogs/${encodeURIComponent(id)}`);
+}
+
+export function postBlogApi(body) {
+  return adminApi('/api/admin/blogs', { method: 'POST', body: JSON.stringify(body) });
+}
+
 export function patchBlogApi(id, body) {
-  return adminApi(`/api/admin/blogs/${id}`, { method: 'PATCH', body: JSON.stringify(body) });
+  return adminApi(`/api/admin/blogs/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  });
 }
 
 export function deleteBlogApi(id) {
-  return adminApi(`/api/admin/blogs/${id}`, { method: 'DELETE' });
+  return adminApi(`/api/admin/blogs/${encodeURIComponent(id)}`, { method: 'DELETE' });
 }
 
 export function fetchAdminReviews() {
@@ -86,7 +142,7 @@ export async function uploadProductImage(productId, file) {
     `${BASE}/api/admin/products/${encodeURIComponent(productId)}/image`,
     {
       method: 'POST',
-      headers: { Authorization: `Bearer ${KEY}` },
+      headers: { Authorization: `Bearer ${bearerForAdmin()}` },
       body: fd,
     }
   );
@@ -100,7 +156,7 @@ export async function uploadBlogCover(blogId, file) {
   fd.append('file', file);
   const r = await fetch(`${BASE}/api/admin/blogs/${encodeURIComponent(blogId)}/cover`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${KEY}` },
+    headers: { Authorization: `Bearer ${bearerForAdmin()}` },
     body: fd,
   });
   const data = await r.json().catch(() => ({}));

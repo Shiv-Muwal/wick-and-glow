@@ -8,6 +8,7 @@ import { authRoutes } from './routes/auth.routes.js';
 import { cartRoutes } from './routes/cart.routes.js';
 import { orderRoutes } from './routes/order.routes.js';
 import { adminRouter } from './routes/admin.js';
+import { postAdminLogin } from './routes/adminLogin.js';
 import { adminAuth } from './middleware/adminAuth.js';
 import { configureCloudinary } from './lib/cloudinary.js';
 import { errorMiddleware } from './middleware/errorMiddleware.js';
@@ -42,6 +43,7 @@ app.use('/api/auth', authRoutes());
 app.use('/api/cart', cartRoutes());
 app.use('/api', orderRoutes());
 app.use('/api', publicRouter());
+app.post('/api/admin/login', postAdminLogin);
 app.use('/api/admin', adminAuth, adminRouter());
 
 app.use(errorMiddleware);
@@ -61,7 +63,29 @@ async function main() {
   });
 }
 
+function printMongoHelp(uri) {
+  const u = uri || '';
+  console.error('\n[MongoDB] Could not connect. Fix one of the following:\n');
+  if (/127\.0\.0\.1|localhost/.test(u)) {
+    console.error(
+      '  • Local URI: start MongoDB on this machine (e.g. run `mongod`), or change MONGODB_URI in backend/.env to Atlas.\n'
+    );
+  }
+  if (u.includes('mongodb+srv')) {
+    console.error(
+      '  • Atlas: MongoDB Atlas → Network Access → add your current IP (or 0.0.0.0/0 for dev only).\n' +
+        '    Also confirm database user password and that the URI includes /dbname?…\n'
+    );
+  }
+  console.error('  • Corrupt node_modules: delete backend/node_modules and package-lock.json, then run npm install again.\n');
+}
+
 main().catch((e) => {
-  console.error(e);
+  if (e?.name === 'MongooseServerSelectionError') {
+    console.error(e.message);
+    printMongoHelp(MONGODB_URI);
+  } else {
+    console.error(e);
+  }
   process.exit(1);
 });

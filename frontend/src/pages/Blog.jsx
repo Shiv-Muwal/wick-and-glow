@@ -4,24 +4,29 @@ import Newsletter from '../components/Newsletter';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { getBlogs } from '../api/client';
 
-const FALLBACK = [
-  { tag: 'Wellness', title: 'Benefits of Soy Candles Over Paraffin', excerpt: 'Natural soy wax burns cleaner, lasts longer...', date: 'Nov 28, 2024', emoji: '🌿' },
-  { tag: 'Aromatherapy', title: 'Best Candle Scents for Relaxation', excerpt: 'Lavender, chamomile, sandalwood, vanilla...', date: 'Nov 15, 2024', emoji: '💜' },
-  { tag: 'Home Decor', title: 'Home Decor with Candles: 8 Styling Ideas', excerpt: 'Candles are the most versatile décor element...', date: 'Nov 3, 2024', emoji: '🏠' },
-];
-
 export default function Blog() {
   useScrollReveal();
-  const [posts, setPosts] = useState(FALLBACK);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
+      setLoading(true);
+      setLoadError(null);
       try {
         const data = await getBlogs();
-        if (!cancelled && Array.isArray(data) && data.length > 0) setPosts(data);
-      } catch {
-        /* FALLBACK */
+        if (!cancelled) {
+          setPosts(Array.isArray(data) ? data : []);
+        }
+      } catch (e) {
+        if (!cancelled) {
+          setPosts([]);
+          setLoadError(e?.message || 'Could not load posts');
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     })();
     return () => {
@@ -41,60 +46,68 @@ bg-[linear-gradient(135deg,var(--cream)_0%,var(--blush)_100%)]">
         </p>
       </div>
 
-      <div className="grid 
-grid-cols-3 
-gap-[30px] 
-px-[60px] pb-[100px] 
-max-[1100px]:grid-cols-2 max-[1100px]:px-[30px] max-[1100px]:pb-[80px] 
-max-[768px]:grid-cols-1">
-        {posts.map((post) => (
-          <article key={post.id || post.title} className="bg-white rounded-[20px] overflow-hidden 
-shadow-[var(--shadow)] 
-transition 
-cursor-pointer 
-hover:-translate-y-[8px] hover:shadow-[var(--shadow-hover)] reveal">
-            <div
-              className="h-[220px] overflow-hidden bg-[var(--blush)]"
-              style={
-                post.coverImageUrl
-                  ? {}
-                  : {
-                      background: `linear-gradient(135deg,var(--blush),#e8b4a0)`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '5rem',
-                    }
-              }
-            >
-              {post.coverImageUrl ? (
-                <img src={post.coverImageUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
-              ) : (
-                post.emoji
-              )}
-            </div>
-            <div className="pt-[28px]">
-              <span className="inline-block 
-bg-[rgba(132,165,157,0.15)] 
-text-[var(--sage)] 
-px-[12px] py-[4px] 
-rounded-[20px] 
-text-[0.72rem] font-semibold tracking-[1px] uppercase 
-mb-[14px]">{post.tag}</span>
-              <h3 className="font-['Playfair_Display',serif] 
-text-[1.2rem] 
-text-[var(--deep)] 
-mb-[12px] 
-leading-[1.4]">{post.title}</h3>
-              <p className="text-[0.87rem] text-[var(--light-text)] leading-[1.7] mb-[20px]">{post.excerpt}</p>
-              <div className="flex items-center justify-between 
-text-[0.78rem] text-[var(--light-text)]">
-                <span>{post.date}</span>
-                <span className="text-[var(--sage)] font-semibold text-[0.82rem]">Read More →</span>
-              </div>
-            </div>
-          </article>
-        ))}
+      <div className="min-h-[200px] px-[60px] pb-[100px] max-[1100px]:px-[30px] max-[1100px]:pb-[80px]">
+        {loading ? (
+          <p className="text-center text-[0.95rem] text-[var(--light-text)]">Loading journal…</p>
+        ) : loadError ? (
+          <p className="mx-auto max-w-[480px] text-center text-[0.95rem] text-[var(--light-text)]">
+            {loadError}. Make sure the API is running (e.g. <code className="text-[0.85rem]">localhost:3000</code>).
+          </p>
+        ) : posts.length === 0 ? (
+          <p className="mx-auto max-w-[480px] text-center text-[0.95rem] text-[var(--light-text)]">
+            No published posts yet. Publish posts from the admin panel to show them here.
+          </p>
+        ) : (
+          <div className="grid grid-cols-3 gap-[30px] max-[1100px]:grid-cols-2 max-[768px]:grid-cols-1">
+            {posts.map((post) => (
+              <article
+                key={post.id || post.title}
+                className="reveal cursor-pointer overflow-hidden rounded-[20px] bg-white shadow-[var(--shadow)] transition hover:-translate-y-[8px] hover:shadow-[var(--shadow-hover)]"
+              >
+                <div
+                  className="h-[220px] overflow-hidden bg-[var(--blush)]"
+                  style={
+                    post.coverImageUrl
+                      ? {}
+                      : {
+                          background: `linear-gradient(135deg,var(--blush),#e8b4a0)`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '5rem',
+                        }
+                  }
+                >
+                  {post.coverImageUrl ? (
+                    <img
+                      src={post.coverImageUrl}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    post.emoji || '🕯️'
+                  )}
+                </div>
+                <div className="px-[24px] pb-[28px] pt-[28px]">
+                  <span className="mb-[14px] inline-block rounded-[20px] bg-[rgba(132,165,157,0.15)] px-[12px] py-[4px] text-[0.72rem] font-semibold uppercase tracking-[1px] text-[var(--sage)]">
+                    {post.tag || 'Journal'}
+                  </span>
+                  <h3 className="mb-[12px] font-['Playfair_Display',serif] text-[1.2rem] leading-[1.4] text-[var(--deep)]">
+                    {post.title}
+                  </h3>
+                  <p className="mb-[20px] text-[0.87rem] leading-[1.7] text-[var(--light-text)]">
+                    {post.excerpt || ''}
+                  </p>
+                  <div className="flex items-center justify-between text-[0.78rem] text-[var(--light-text)]">
+                    <span>{post.date}</span>
+                    <span className="text-[0.82rem] font-semibold text-[var(--sage)]">Read More →</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </div>
 
       <Newsletter />

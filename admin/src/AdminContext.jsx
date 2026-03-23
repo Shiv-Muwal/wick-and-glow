@@ -14,6 +14,7 @@ import {
   postCouponApi,
   patchCouponApi,
   deleteCouponApi,
+  postBlogApi,
   patchBlogApi,
   deleteBlogApi,
 } from './api/client.js';
@@ -164,7 +165,28 @@ export function AdminProvider({ children }) {
       }));
     } catch (e) {
       console.error(e);
+      throw e;
     }
+  }, []);
+
+  const createBlog = useCallback(async (payload) => {
+    const created = await postBlogApi(payload);
+    setState((s) => ({
+      ...s,
+      blogs: [{ ...created, tag: created.tag || 'Journal' }, ...s.blogs],
+    }));
+    return created;
+  }, []);
+
+  const saveBlog = useCallback(async (id, payload) => {
+    const updated = await patchBlogApi(id, payload);
+    setState((s) => ({
+      ...s,
+      blogs: s.blogs.map((x) =>
+        x.id === id ? { ...x, ...updated, tag: updated.tag ?? x.tag } : x
+      ),
+    }));
+    return updated;
   }, []);
 
   const value = useMemo(
@@ -182,6 +204,8 @@ export function AdminProvider({ children }) {
       addCoupon,
       toggleBlogPublished,
       removeBlog,
+      createBlog,
+      saveBlog,
     }),
     [
       state,
@@ -197,6 +221,8 @@ export function AdminProvider({ children }) {
       addCoupon,
       toggleBlogPublished,
       removeBlog,
+      createBlog,
+      saveBlog,
     ]
   );
 

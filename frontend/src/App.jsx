@@ -1,7 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
-import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './context/ToastContext';
 import Layout from './components/Layout';
 // Phase 2 (jab cart/checkout login-only chahiye): neeche wale routes ko comment karo aur ProtectedRoute wala block uncomment karo.
@@ -24,42 +23,40 @@ import LegalPage from './pages/LegalPage';
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <CartProvider>
-          <ToastProvider>
-            <Routes>
-              <Route path="/" element={<Layout />}>
-                <Route index element={<Home />} />
-                <Route path="shop" element={<Shop />} />
-                <Route path="product/:id" element={<ProductDetail />} />
-                <Route path="about" element={<About />} />
-                <Route path="blog" element={<Blog />} />
-                <Route path="contact" element={<Contact />} />
-                <Route path="login" element={<Login />} />
-                <Route path="signup" element={<Signup />} />
-                <Route path="order-confirmation" element={<OrderConfirmation />} />
-                <Route path="account" element={<Account />} />
-                <Route path="dashboard" element={<Account />} />
-                <Route path="track-order" element={<TrackOrder />} />
-                <Route path="legal/:topic" element={<LegalPage />} />
-                {/* Phase 1: guest cart + checkout (bina login) */}
+    <AuthProvider>
+      <CartProvider>
+        <ToastProvider>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="shop" element={<Shop />} />
+              <Route path="product/:id" element={<ProductDetail />} />
+              <Route path="about" element={<About />} />
+              <Route path="blog" element={<Blog />} />
+              <Route path="contact" element={<Contact />} />
+              <Route path="login" element={<Login />} />
+              <Route path="signup" element={<Signup />} />
+              <Route path="order-confirmation" element={<OrderConfirmation />} />
+              <Route path="account" element={<Account />} />
+              <Route path="dashboard" element={<Account />} />
+              <Route path="track-order" element={<TrackOrder />} />
+              <Route path="legal/:topic" element={<LegalPage />} />
+              {/* Phase 1: guest cart + checkout (bina login) */}
+              <Route path="cart" element={<CartPage />} />
+              <Route path="checkout" element={<Checkout />} />
+              {/*
+                Phase 2 — yeh block uncomment karo; upar ke do <Route path="cart|checkout" /> hata do / comment karo:
+
+              <Route element={<ProtectedRoute />}>
                 <Route path="cart" element={<CartPage />} />
                 <Route path="checkout" element={<Checkout />} />
-                {/*
-                  Phase 2 — yeh block uncomment karo; upar ke do <Route path="cart|checkout" /> hata do / comment karo:
-
-                <Route element={<ProtectedRoute />}>
-                  <Route path="cart" element={<CartPage />} />
-                  <Route path="checkout" element={<Checkout />} />
-                </Route>
-                */}
-                <Route path="*" element={<NotFound />} />
               </Route>
-            </Routes>
-          </ToastProvider>
-        </CartProvider>
-      </AuthProvider>
-    </ThemeProvider>
+              */}
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </ToastProvider>
+      </CartProvider>
+    </AuthProvider>
   );
 }

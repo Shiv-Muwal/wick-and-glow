@@ -11,8 +11,7 @@ Express API for the Lumière storefront and admin panel. Data lives in **MongoDB
 
 ```bash
 cd backend
-cp .env.example .env
-# Edit .env: MONGODB_URI, CLOUDINARY_* , ADMIN_API_KEY
+# Create .env here with MONGODB_URI, JWT_SECRET, ADMIN_API_KEY, etc. (see table below)
 npm install
 npm run dev
 ```
@@ -27,7 +26,8 @@ On first connection, if the `products` collection is empty, the server **seeds**
 | `MONGODB_URI` | Local or Atlas; include DB name in path, e.g. `.../wicknglow?...` (`MONGO_URI` also read as alias) |
 | `JWT_SECRET` | Signs customer JWTs; use a long random string in production |
 | `JWT_EXPIRE` | Optional, default `7d` (`jsonwebtoken` `expiresIn` format) |
-| `ADMIN_API_KEY` | Bearer / `x-api-key` for `/api/admin/*` (default `dev-admin-key` if unset). Match **admin** `VITE_ADMIN_API_KEY` |
+| `ADMIN_API_KEY` | Bearer / `x-api-key` for `/api/admin/*` (default `dev-admin-key` if unset). Optional if admins use **login JWT** |
+| `ADMIN_LOGIN_EMAIL`, `ADMIN_LOGIN_PASSWORD` | `POST /api/admin/login` — returns JWT (`role: admin`, 7d). Admin UI stores it and sends `Authorization: Bearer <jwt>` |
 | `CLOUDINARY_CLOUD_NAME` | From Cloudinary dashboard |
 | `CLOUDINARY_API_KEY` | From Cloudinary dashboard |
 | `CLOUDINARY_API_SECRET` | From Cloudinary dashboard |
@@ -47,7 +47,7 @@ Newsletter `POST /api/newsletter` still saves subscribers without email vars; th
 | POST | `/api/auth/login` | `email`, `password` | Returns `{ token, user }` |
 | GET | `/api/auth/me` | Header `Authorization: Bearer <token>` | Returns `{ user }` |
 
-Set `JWT_SECRET` in production (see `.env.example`).
+Set a strong `JWT_SECRET` in `.env` for production.
 
 ## Public API (`/api`)
 
