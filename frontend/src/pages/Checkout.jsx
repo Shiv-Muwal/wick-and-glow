@@ -132,7 +132,10 @@ export default function Checkout() {
       <div className="mx-auto max-w-lg px-6 py-[160px] text-center max-[1024px]:pt-[180px]">
         <h1 className="font-['Playfair_Display',serif] text-2xl text-[var(--deep)]">Your cart is empty</h1>
         <p className="mt-3 text-[0.9rem] text-[var(--light-text)]">Add candles to checkout.</p>
-        <Link to="/shop" className="btn-primary mt-8 inline-block">
+        <Link
+          to="/shop"
+          className="mt-8 inline-flex rounded-[999px] bg-[var(--deep)] px-[28px] py-[14px] text-[0.78rem] font-semibold uppercase tracking-[1.4px] text-[var(--cream)] no-underline transition hover:bg-[var(--gold)] hover:text-[var(--deep)]"
+        >
           Continue shopping
         </Link>
       </div>
@@ -315,7 +318,7 @@ export default function Checkout() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="btn-primary mt-6 w-full py-3 text-[0.95rem] disabled:opacity-60"
+                className="mt-6 w-full rounded-[999px] bg-[var(--deep)] px-[28px] py-[14px] text-[0.82rem] font-semibold uppercase tracking-[1.4px] text-[var(--cream)] transition hover:bg-[var(--gold)] hover:text-[var(--deep)] disabled:opacity-60"
               >
                 {submitting ? 'Placing order…' : 'Place order (COD)'}
               </button>

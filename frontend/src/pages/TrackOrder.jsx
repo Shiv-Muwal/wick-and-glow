@@ -59,7 +59,11 @@ export default function TrackOrder() {
           {error ? (
             <p className="text-sm text-red-700 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{error}</p>
           ) : null}
-          <button type="submit" className="btn-primary" disabled={loading}>
+          <button
+            type="submit"
+            className="rounded-[999px] bg-[var(--deep)] px-[28px] py-[14px] text-[0.78rem] font-semibold uppercase tracking-[1.4px] text-[var(--cream)] transition hover:bg-[var(--gold)] hover:text-[var(--deep)] disabled:opacity-60"
+            disabled={loading}
+          >
             {loading ? 'Checking…' : 'Track order'}
           </button>
         </form>

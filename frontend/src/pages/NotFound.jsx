@@ -7,7 +7,10 @@ export default function NotFound() {
       <p className="text-[var(--light-text)] mb-8 max-w-md mx-auto">
         This page does not exist. The product or link may have moved.
       </p>
-      <Link to="/" className="btn-primary inline-block no-underline">
+      <Link
+        to="/"
+        className="inline-flex rounded-[999px] bg-[var(--deep)] px-[28px] py-[14px] text-[0.78rem] font-semibold uppercase tracking-[1.4px] text-[var(--cream)] no-underline transition hover:bg-[var(--gold)] hover:text-[var(--deep)]"
+      >
         Back to home
       </Link>
     </div>

@@ -13,8 +13,11 @@ max-[768px]:grid-cols-1"
       >
         <div className="">
           
-          <Link to="/" className="nav-logo text-[var(--cream)] mb-[20px] flex">
-            <div className="logo-flame" />
+          <Link
+            to="/"
+            className="mb-[20px] flex items-center gap-[10px] font-['Playfair_Display',serif] text-[1.6rem] font-bold text-[var(--cream)] no-underline"
+          >
+            <div className="h-[28px] w-[16px] rounded-[50%_50%_20%_20%] bg-[linear-gradient(180deg,#fff9c4_0%,#f6bd60_40%,#e07b39_70%,transparent_100%)] shadow-[0_0_10px_rgba(246,189,96,0.6)]" />
             Wick &amp; Glow
           </Link>
           <p className="mt-4 text-[0.88rem] leading-[1.8] text-[rgba(247,237,226,0.6)] max-w-[260px]">

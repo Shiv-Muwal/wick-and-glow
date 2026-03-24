@@ -75,7 +75,7 @@ export default function ProductDetail() {
 
   if (loading) {
     return (
-      <div className="product-detail px-[60px] py-[120px] text-center text-[var(--light-text)]">
+      <div className="px-[60px] py-[120px] text-center text-[var(--light-text)]">
         Loading…
       </div>
     );
@@ -83,9 +83,9 @@ export default function ProductDetail() {
 
   if (!product) {
     return (
-      <div className="product-detail">
+      <div className="px-[60px] py-[120px] text-center text-[var(--light-text)]">
         <p>Product not found.</p>
-        <Link to="/shop">Back to Shop</Link>
+        <Link to="/shop" className="mt-6 inline-flex text-[var(--sage)] no-underline">Back to Shop</Link>
       </div>
     );
   }
@@ -115,15 +115,15 @@ export default function ProductDetail() {
 
   return (
     <>
-      <div className="product-detail">
+      <div className="px-[60px] pb-[80px] pt-[140px] max-[1100px]:px-[30px]">
         <div className="flex items-center justify-center gap-[10px] mt-[12px] text-[0.82rem] text-[var(--light-text)]" style={{ marginBottom: 40 }}>
           <Link to="/">Home</Link> / <Link to="/shop" className="text-[var(--sage)] no-underline">Shop</Link> / <span>{product.name}</span>
         </div>
 
-        <div className="product-detail-grid">
-          <div className="product-gallery reveal">
+        <div className="grid grid-cols-2 items-start gap-[80px] max-[1100px]:grid-cols-1">
+          <div>
             <div
-              className="main-image"
+              className="h-[620px] overflow-hidden rounded-[24px] bg-[var(--blush)]"
               style={
                 product.imageUrl
                   ? { padding: 0, overflow: 'hidden' }
@@ -145,12 +145,12 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          <div className="reveal">
+          <div>
             <div className="product-category" style={{ fontSize: '0.75rem', letterSpacing: 2, textTransform: 'uppercase', color: '#84a59d', fontWeight: 600, marginBottom: 12 }}>
               {product.category} Collection
             </div>
-            <h1 className="product-detail-name">{product.name}</h1>
-            <div className="detail-price">
+            <h1 className="mb-3 font-['Playfair_Display',serif] text-[2.4rem] leading-[1.2] text-[var(--deep)]">{product.name}</h1>
+            <div className="mb-4 text-[2.1rem] font-bold text-[var(--text)]">
               ₹{product.price}
               {product.originalPrice ? (
                 <span className="original ml-2 text-[1rem] line-through text-[var(--light-text)]">₹{product.originalPrice}</span>
@@ -161,27 +161,41 @@ export default function ProductDetail() {
             ) : cap < 999 && cap <= 10 ? (
               <p className="text-[0.85rem] text-amber-900 mb-4">Only {cap} left in stock</p>
             ) : null}
-            <p className="detail-desc">{product.desc}</p>
-            <div className="product-features">
-              <div className="feature-item"><span>🌿</span> Natural Soy Wax</div>
-              <div className="feature-item"><span>⏳</span> 40+ Burn Hours</div>
-              <div className="feature-item"><span>🌸</span> Premium Fragrance</div>
-              <div className="feature-item"><span>♻️</span> Eco Friendly</div>
+            <p className="mb-[28px] text-[0.95rem] leading-[1.85] text-[var(--light-text)]">{product.desc}</p>
+            <div className="mb-[24px] grid grid-cols-2 gap-[12px]">
+              <div className="rounded-[10px] bg-[rgba(132,165,157,0.08)] px-[12px] py-[10px] text-[0.82rem] text-[var(--text)]"><span>🌿</span> Natural Soy Wax</div>
+              <div className="rounded-[10px] bg-[rgba(132,165,157,0.08)] px-[12px] py-[10px] text-[0.82rem] text-[var(--text)]"><span>⏳</span> 40+ Burn Hours</div>
+              <div className="rounded-[10px] bg-[rgba(132,165,157,0.08)] px-[12px] py-[10px] text-[0.82rem] text-[var(--text)]"><span>🌸</span> Premium Fragrance</div>
+              <div className="rounded-[10px] bg-[rgba(132,165,157,0.08)] px-[12px] py-[10px] text-[0.82rem] text-[var(--text)]"><span>♻️</span> Eco Friendly</div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 20 }}>
               <label style={{ fontSize: '0.85rem', fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase' }}>Quantity</label>
-              <div className="cart-qty">
-                <button type="button" className="qty-btn" disabled={out} onClick={() => bumpQty(-1)}>−</button>
-                <span className="qty-num">{qty}</span>
-                <button type="button" className="qty-btn" disabled={out || qty >= cap} onClick={() => bumpQty(1)}>+</button>
+              <div className="flex items-center gap-[10px]">
+                <button
+                  type="button"
+                  className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-[var(--blush)] text-[1rem] text-[var(--text)] transition hover:bg-[var(--sage)] hover:text-white disabled:opacity-40"
+                  disabled={out}
+                  onClick={() => bumpQty(-1)}
+                >
+                  −
+                </button>
+                <span className="min-w-[24px] text-center text-[0.95rem] font-semibold">{qty}</span>
+                <button
+                  type="button"
+                  className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-[var(--blush)] text-[1rem] text-[var(--text)] transition hover:bg-[var(--sage)] hover:text-white disabled:opacity-40"
+                  disabled={out || qty >= cap}
+                  onClick={() => bumpQty(1)}
+                >
+                  +
+                </button>
               </div>
             </div>
             <button
               type="button"
-              className="btn-primary add-to-bag"
+              className="w-full rounded-[999px] bg-[var(--deep)] px-[28px] py-[14px] text-[0.8rem] font-semibold uppercase tracking-[1.4px] text-[var(--cream)] transition hover:bg-[var(--gold)] hover:text-[var(--deep)] disabled:opacity-55"
               onClick={handleAddToCart}
               disabled={out}
-              style={{ width: '100%', padding: 18, opacity: out ? 0.55 : 1 }}
+              style={{ opacity: out ? 0.55 : 1 }}
             >
               {out ? 'Out of stock' : 'Add to Cart 🕯️'}
             </button>

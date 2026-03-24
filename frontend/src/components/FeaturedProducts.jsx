@@ -28,19 +28,28 @@ export default function FeaturedProducts() {
 
   return (
     <>
-      <section id="featured">
-        <div className="section-header">
-          <div className="section-eyebrow reveal">Bestsellers</div>
-          <h2 className="section-title reveal">Our Signature Collection</h2>
-          <div className="section-line" />
+      <section id="featured" className="px-[60px] py-[100px] max-[1100px]:px-[30px] max-[1100px]:py-[80px]">
+        <div className="mb-[52px] text-center">
+          <div className="mb-[12px] text-[0.74rem] font-semibold uppercase tracking-[0.24em] text-[var(--sage)]">
+            Bestsellers
+          </div>
+          <h2 className="font-['Playfair_Display',serif] text-[clamp(2rem,3.5vw,3rem)] leading-[1.2] text-[var(--deep)]">
+            Our Signature Collection
+          </h2>
+          <div className="mx-auto mt-[20px] h-[2px] w-[60px] rounded-[2px] bg-[linear-gradient(90deg,var(--sage),var(--gold))]" />
         </div>
-        <div className="products-grid">
+        <div className="grid grid-cols-4 gap-[30px] max-[1100px]:grid-cols-2 max-[768px]:grid-cols-1">
           {list.map((p) => (
             <ProductCard key={p.id} product={p} onQuickView={setQuickViewProduct} />
           ))}
         </div>
-        <div style={{ textAlign: 'center', marginTop: 50 }}>
-          <Link to="/shop" className="btn-secondary">View All Candles →</Link>
+        <div className="mt-[50px] text-center">
+          <Link
+            to="/shop"
+            className="inline-flex items-center rounded-[50px] border-[1.5px] border-[rgba(132,165,157,0.35)] bg-transparent px-[36px] py-[14px] text-[0.78rem] font-semibold uppercase tracking-[1.5px] text-[var(--text)] no-underline transition-all hover:border-[var(--sage)] hover:bg-[var(--sage)] hover:text-white"
+          >
+            View All Candles →
+          </Link>
         </div>
       </section>
 

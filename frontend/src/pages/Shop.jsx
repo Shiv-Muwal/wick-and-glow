@@ -72,13 +72,14 @@ bg-[linear-gradient(135deg,var(--cream)_0%,var(--blush)_100%)]">
         </div>
       </div>
 
-      <div className="search-bar-wrap">
-        <span>🔍</span>
+      <div className="mx-[60px] mb-[40px] mt-0 flex items-center rounded-[50px] border-[1.5px] border-transparent bg-white px-[24px] py-[12px] shadow-[0_4px_20px_rgba(44,24,16,0.08)] transition-all focus-within:border-[var(--sage)] max-[1100px]:mx-[30px]">
+        <span className="text-[1.1rem] text-[var(--light-text)]">🔍</span>
         <input
           type="text"
           placeholder="Search candles by name, scent..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          className="ml-[12px] w-full border-none bg-transparent text-[0.9rem] text-[var(--text)] outline-none"
         />
       </div>
 
@@ -88,12 +89,12 @@ gap-[40px]
 p-[60px] 
 items-start 
 max-[1100px]:grid-cols-1">
-        <aside className="filters">
-          <div className="filter-card">
-            <h4>Categories</h4>
-            <div className="filter-options">
+        <aside className="lg:sticky lg:top-[100px]">
+          <div className="mb-[20px] rounded-[20px] bg-white p-[28px] shadow-[var(--shadow)]">
+            <h4 className="mb-[16px] font-['Playfair_Display',serif] text-[1rem] text-[var(--deep)]">Categories</h4>
+            <div className="flex flex-col gap-[10px]">
               {CATEGORIES.map((cat) => (
-                <label key={cat} className="filter-option">
+                <label key={cat} className="flex cursor-pointer items-center gap-[10px]">
                   <input
                     type="checkbox"
                     checked={categoryFilter.includes(cat)}
@@ -105,16 +106,16 @@ max-[1100px]:grid-cols-1">
                       )
                     }
                   />
-                  <span>{cat}</span>
+                  <span className="text-[0.88rem] text-[var(--text)]">{cat}</span>
                 </label>
               ))}
             </div>
           </div>
-          <div className="filter-card">
-            <h4>Fragrance</h4>
-            <div className="filter-options">
+          <div className="mb-[20px] rounded-[20px] bg-white p-[28px] shadow-[var(--shadow)]">
+            <h4 className="mb-[16px] font-['Playfair_Display',serif] text-[1rem] text-[var(--deep)]">Fragrance</h4>
+            <div className="flex flex-col gap-[10px]">
               {FRAGRANCES.map((fragrance) => (
-                <label key={fragrance} className="filter-option">
+                <label key={fragrance} className="flex cursor-pointer items-center gap-[10px]">
                   <input
                     type="checkbox"
                     checked={fragranceFilter.includes(fragrance)}
@@ -126,16 +127,20 @@ max-[1100px]:grid-cols-1">
                       )
                     }
                   />
-                  <span>{fragrance === 'French Lavender' ? 'Lavender' : fragrance}</span>
+                  <span className="text-[0.88rem] text-[var(--text)]">
+                    {fragrance === 'French Lavender' ? 'Lavender' : fragrance}
+                  </span>
                 </label>
               ))}
             </div>
           </div>
-          <div className="filter-card">
-            <h4>Price: Up to <span id="price-val">₹{maxPrice.toLocaleString('en-IN')}</span></h4>
+          <div className="mb-[20px] rounded-[20px] bg-white p-[28px] shadow-[var(--shadow)]">
+            <h4 className="mb-[16px] font-['Playfair_Display',serif] text-[1rem] text-[var(--deep)]">
+              Price: Up to <span id="price-val">₹{maxPrice.toLocaleString('en-IN')}</span>
+            </h4>
             <input
               type="range"
-              className="price-range"
+              className="w-full accent-[var(--sage)]"
               min={500}
               max={2000}
               step={50}
@@ -145,7 +150,7 @@ max-[1100px]:grid-cols-1">
           </div>
           <button
             type="button"
-            className="btn-primary mt-[10px] w-full"
+            className="mt-[10px] w-full rounded-[999px] bg-[var(--deep)] px-[22px] py-[13px] text-[0.78rem] font-semibold uppercase tracking-[1.4px] text-[var(--cream)] transition hover:bg-[var(--gold)] hover:text-[var(--deep)]"
             onClick={() => {
               setSearch('');
               setCategoryFilter([]);
@@ -158,16 +163,20 @@ max-[1100px]:grid-cols-1">
         </aside>
 
         <div>
-          <div className="shop-toolbar">
-            <span className="product-count">Showing {sorted.length} products</span>
-            <select className="sort-select" value={sort} onChange={(e) => setSort(e.target.value)}>
+          <div className="mb-[30px] flex items-center justify-between">
+            <span className="text-[0.88rem] text-[var(--light-text)]">Showing {sorted.length} products</span>
+            <select
+              className="cursor-pointer rounded-[10px] border-[1.5px] border-[rgba(132,165,157,0.3)] bg-white px-[16px] py-[10px] text-[0.85rem] text-[var(--text)] outline-none"
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+            >
               <option value="default">Sort: Featured</option>
               <option value="price-asc">Price: Low to High</option>
               <option value="price-desc">Price: High to Low</option>
               <option value="name-asc">Name: A–Z</option>
             </select>
           </div>
-          <div className="products-grid" id="products-grid">
+          <div className="grid grid-cols-4 gap-[30px] max-[1300px]:grid-cols-3 max-[900px]:grid-cols-2 max-[640px]:grid-cols-1" id="products-grid">
             {sorted.map((p) => (
               <ProductCard key={p.id} product={p} onQuickView={setQuickViewProduct} />
             ))}

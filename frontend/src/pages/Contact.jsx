@@ -48,36 +48,41 @@ grid-cols-[1fr_1.5fr]
 gap-[60px] 
 p-[60px] 
 max-[1100px]:grid-cols-1 max-[1100px]:p-[30px]">
-          <div className="reveal">
-            <h2>Let&apos;s Start a Conversation</h2>
-            <p>Whether you have a question about our candles, need help with an order, or want to explore custom gifting options — our team is here to help.</p>
-            <div className="contact-items">
-              <div className="contact-item">
-                <div className="contact-icon">📍</div>
+          <div>
+            <h2 className="font-['Playfair_Display',serif] text-[2rem] text-[var(--deep)]">
+              Let&apos;s Start a Conversation
+            </h2>
+            <p className="mt-[12px] text-[0.95rem] leading-[1.8] text-[var(--light-text)]">
+              Whether you have a question about our candles, need help with an order, or want to
+              explore custom gifting options — our team is here to help.
+            </p>
+            <div className="mt-[28px] grid gap-[14px]">
+              <div className="flex items-start gap-[14px] rounded-[14px] border border-[var(--border)] bg-white p-[14px]">
+                <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[var(--blush)] text-[1.05rem]">📍</div>
                 <div>
-                  <h4>Visit Our Studio</h4>
-                  <p>12 Artisan Lane, Bandra West<br />Mumbai, Maharashtra 400050</p>
+                  <h4 className="text-[0.95rem] font-semibold text-[var(--deep)]">Visit Our Studio</h4>
+                  <p className="text-[0.85rem] leading-[1.6] text-[var(--light-text)]">12 Artisan Lane, Bandra West<br />Mumbai, Maharashtra 400050</p>
                 </div>
               </div>
-              <div className="contact-item">
-                <div className="contact-icon">📧</div>
+              <div className="flex items-start gap-[14px] rounded-[14px] border border-[var(--border)] bg-white p-[14px]">
+                <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[var(--blush)] text-[1.05rem]">📧</div>
                 <div>
-                  <h4>Email Us</h4>
-                  <p>hello@wickandglow.com<br />orders@wickandglow.com</p>
+                  <h4 className="text-[0.95rem] font-semibold text-[var(--deep)]">Email Us</h4>
+                  <p className="text-[0.85rem] leading-[1.6] text-[var(--light-text)]">hello@wickandglow.com<br />orders@wickandglow.com</p>
                 </div>
               </div>
-              <div className="contact-item">
-                <div className="contact-icon">📞</div>
+              <div className="flex items-start gap-[14px] rounded-[14px] border border-[var(--border)] bg-white p-[14px]">
+                <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[var(--blush)] text-[1.05rem]">📞</div>
                 <div>
-                  <h4>Call or WhatsApp</h4>
-                  <p>+91 98765 43210<br />Mon–Sat: 10am – 7pm IST</p>
+                  <h4 className="text-[0.95rem] font-semibold text-[var(--deep)]">Call or WhatsApp</h4>
+                  <p className="text-[0.85rem] leading-[1.6] text-[var(--light-text)]">+91 98765 43210<br />Mon–Sat: 10am – 7pm IST</p>
                 </div>
               </div>
-              <div className="contact-item">
-                <div className="contact-icon">📸</div>
+              <div className="flex items-start gap-[14px] rounded-[14px] border border-[var(--border)] bg-white p-[14px]">
+                <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[var(--blush)] text-[1.05rem]">📸</div>
                 <div>
-                  <h4>Follow Us</h4>
-                  <p>@wickandglow on Instagram<br />Join our community</p>
+                  <h4 className="text-[0.95rem] font-semibold text-[var(--deep)]">Follow Us</h4>
+                  <p className="text-[0.85rem] leading-[1.6] text-[var(--light-text)]">@wickandglow on Instagram<br />Join our community</p>
                 </div>
               </div>
             </div>
@@ -115,30 +120,30 @@ max-[1100px]:grid-cols-1 max-[1100px]:p-[30px]">
             </div>
           </div>
 
-          <div className="contact-form reveal">
-            <h3>Send Us a Message</h3>
+          <div className="rounded-[20px] border border-[var(--border)] bg-white p-[28px] shadow-[var(--shadow)]">
+            <h3 className="mb-[16px] font-['Playfair_Display',serif] text-[1.35rem] text-[var(--deep)]">Send Us a Message</h3>
             <form id="contact-form" onSubmit={handleSubmit}>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>First Name</label>
-                  <input type="text" name="firstName" placeholder="Kavya" value={form.firstName} onChange={handleChange} required />
+              <div className="grid grid-cols-2 gap-[14px] max-[700px]:grid-cols-1">
+                <div className="flex flex-col gap-[6px]">
+                  <label className="text-[0.78rem] font-semibold text-[var(--deep)]">First Name</label>
+                  <input className="rounded-[10px] border border-[#d7d7d7] px-[12px] py-[10px] text-[0.9rem] outline-none focus:border-[var(--sage)]" type="text" name="firstName" placeholder="Kavya" value={form.firstName} onChange={handleChange} required />
                 </div>
-                <div className="form-group">
-                  <label>Last Name</label>
-                  <input type="text" name="lastName" placeholder="Nair" value={form.lastName} onChange={handleChange} required />
+                <div className="flex flex-col gap-[6px]">
+                  <label className="text-[0.78rem] font-semibold text-[var(--deep)]">Last Name</label>
+                  <input className="rounded-[10px] border border-[#d7d7d7] px-[12px] py-[10px] text-[0.9rem] outline-none focus:border-[var(--sage)]" type="text" name="lastName" placeholder="Nair" value={form.lastName} onChange={handleChange} required />
                 </div>
               </div>
-              <div className="form-group">
-                <label>Email Address</label>
-                <input type="email" name="email" placeholder="kavya@example.com" value={form.email} onChange={handleChange} required />
+              <div className="mt-[12px] flex flex-col gap-[6px]">
+                <label className="text-[0.78rem] font-semibold text-[var(--deep)]">Email Address</label>
+                <input className="rounded-[10px] border border-[#d7d7d7] px-[12px] py-[10px] text-[0.9rem] outline-none focus:border-[var(--sage)]" type="email" name="email" placeholder="kavya@example.com" value={form.email} onChange={handleChange} required />
               </div>
-              <div className="form-group">
-                <label>Phone (Optional)</label>
-                <input type="tel" name="phone" placeholder="+91 98765 43210" value={form.phone} onChange={handleChange} />
+              <div className="mt-[12px] flex flex-col gap-[6px]">
+                <label className="text-[0.78rem] font-semibold text-[var(--deep)]">Phone (Optional)</label>
+                <input className="rounded-[10px] border border-[#d7d7d7] px-[12px] py-[10px] text-[0.9rem] outline-none focus:border-[var(--sage)]" type="tel" name="phone" placeholder="+91 98765 43210" value={form.phone} onChange={handleChange} />
               </div>
-              <div className="form-group">
-                <label>Subject</label>
-                <select name="subject" value={form.subject} onChange={handleChange}>
+              <div className="mt-[12px] flex flex-col gap-[6px]">
+                <label className="text-[0.78rem] font-semibold text-[var(--deep)]">Subject</label>
+                <select className="rounded-[10px] border border-[#d7d7d7] px-[12px] py-[10px] text-[0.9rem] outline-none focus:border-[var(--sage)]" name="subject" value={form.subject} onChange={handleChange}>
                   <option value="">Select a subject</option>
                   <option>Order Enquiry</option>
                   <option>Custom / Bulk Order</option>
@@ -148,17 +153,17 @@ max-[1100px]:grid-cols-1 max-[1100px]:p-[30px]">
                   <option>Other</option>
                 </select>
               </div>
-              <div className="form-group">
-                <label>Message</label>
-                <textarea name="message" placeholder="Tell us how we can help you..." value={form.message} onChange={handleChange} required />
+              <div className="mt-[12px] flex flex-col gap-[6px]">
+                <label className="text-[0.78rem] font-semibold text-[var(--deep)]">Message</label>
+                <textarea className="min-h-[130px] rounded-[10px] border border-[#d7d7d7] px-[12px] py-[10px] text-[0.9rem] outline-none focus:border-[var(--sage)]" name="message" placeholder="Tell us how we can help you..." value={form.message} onChange={handleChange} required />
               </div>
-              <button type="submit" className="btn-primary w-full px-4 py-[18px]">Send Message →</button>
+              <button type="submit" className="mt-[16px] w-full rounded-[999px] bg-[var(--deep)] px-[16px] py-[15px] text-[0.8rem] font-semibold uppercase tracking-[1.3px] text-[var(--cream)] transition hover:bg-[var(--gold)] hover:text-[var(--deep)]">Send Message →</button>
             </form>
           </div>
         </div>
 
         <div className="px-[60px]">
-          <div className="reveal shadow-soft">
+          <div className="rounded-[24px] shadow-[var(--shadow)]">
             <div className="mt-5 rounded-[24px] bg-white p-[42px] text-center">
             <div className="mb-[10px] text-[2rem]">📍</div>
             <p className="mb-[6px] font-semibold text-deep">
@@ -167,7 +172,7 @@ max-[1100px]:grid-cols-1 max-[1100px]:p-[30px]">
             <p className="mb-[14px] text-[0.85rem] text-lightText">
               12 Artisan Lane, Mumbai 400050 · Open Mon–Sat 10am–7pm
             </p>
-            <a href="https://maps.google.com" target="_blank" rel="noreferrer" className="btn-secondary">
+            <a href="https://maps.google.com" target="_blank" rel="noreferrer" className="inline-flex rounded-[999px] border-[1.5px] border-[rgba(132,165,157,0.35)] px-[26px] py-[12px] text-[0.78rem] font-semibold uppercase tracking-[1.3px] text-[var(--text)] no-underline transition hover:border-[var(--sage)] hover:bg-[var(--sage)] hover:text-white">
               Open in Google Maps →
             </a>
             </div>

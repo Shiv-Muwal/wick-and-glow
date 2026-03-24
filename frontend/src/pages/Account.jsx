@@ -75,10 +75,10 @@ export default function Account() {
           Sign in to view your profile, orders, and saved cart.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/login" className="btn-primary">
+          <Link to="/login" className="inline-flex rounded-[999px] bg-[var(--deep)] px-[24px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--cream)] no-underline transition hover:bg-[var(--gold)] hover:text-[var(--deep)]">
             Sign in
           </Link>
-          <Link to="/signup" className="btn-secondary">
+          <Link to="/signup" className="inline-flex rounded-[999px] border-[1.5px] border-[rgba(132,165,157,0.35)] px-[24px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--text)] no-underline transition hover:border-[var(--sage)] hover:bg-[var(--sage)] hover:text-white">
             Create account
           </Link>
         </div>
@@ -143,7 +143,7 @@ export default function Account() {
               className="mt-1 w-full rounded-lg border border-[#ccc] px-3 py-2 text-[0.95rem] outline-none focus:border-[var(--sage)]"
             />
           </label>
-          <button type="submit" disabled={pwSubmitting} className="btn-primary mt-2 w-fit px-6 disabled:opacity-60">
+          <button type="submit" disabled={pwSubmitting} className="mt-2 w-fit rounded-[999px] bg-[var(--deep)] px-[24px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--cream)] transition hover:bg-[var(--gold)] hover:text-[var(--deep)] disabled:opacity-60">
             {pwSubmitting ? 'Updating…' : 'Update password'}
           </button>
         </form>
@@ -157,7 +157,7 @@ export default function Account() {
       ) : orders.length === 0 ? (
         <div className="rounded-xl border border-dashed border-[rgba(132,165,157,0.4)] bg-[rgba(132,165,157,0.06)] p-10 text-center">
           <p className="text-[0.95rem] text-[var(--light-text)]">No orders yet.</p>
-          <Link to="/shop" className="btn-primary mt-6 inline-block">
+          <Link to="/shop" className="mt-6 inline-flex rounded-[999px] bg-[var(--deep)] px-[24px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--cream)] no-underline transition hover:bg-[var(--gold)] hover:text-[var(--deep)]">
             Start shopping
           </Link>
         </div>

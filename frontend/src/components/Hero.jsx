@@ -7,7 +7,7 @@ export default function Hero() {
       <div className="absolute  w-[300px] h-[300px] bg-[rgba(132,165,157,0.3)] bottom-[10%] right-[10%] rounded-full blur-[80px] opacity-40 z-[1]" />
       <div className="absolute  w-[200px] h-[200px] bg-[rgba(246,189,96,0.2)] top-[30%] left-[5%] rounded-full blur-[80px] opacity-40 z-[1]" />
 
-      <div className="flex-1 max-w-[580px] z-[2] reveal">
+      <div className="z-[2] max-w-[580px] flex-1">
         <div className="flex items-center gap-3 mb-5 text-[0.75rem] tracking-[4px] uppercase font-semibold text-[var(--sage)] before:content-[''] before:w-[30px] before:h-[1px] before:bg-[var(--sage)] before:inline-block">Since 2019 · Handcrafted with Love</div>
         <h1 className="font-['Playfair_Display',serif] 
 text-[clamp(2.8rem,5vw,4.5rem)] 
@@ -19,8 +19,18 @@ mb-[24px]">Handcrafted <em className="italic text-[var(--sage)]">Luxury</em><br 
           fragrances, natural wax, and designs that transform any space into a sanctuary.
         </p>
         <div className="flex gap-4 flex-wrap max-[1100px]:justify-center">
-          <Link to="/shop" className="btn-primary">Shop Now →</Link>
-          <Link to="/about" className="btn-secondary">Our Story</Link>
+          <Link
+            to="/shop"
+            className="inline-flex items-center rounded-[999px] bg-[var(--deep)] px-[36px] py-[16px] text-[0.85rem] font-semibold uppercase tracking-[1.5px] text-[var(--cream)] no-underline transition hover:bg-[var(--gold)] hover:text-[var(--deep)]"
+          >
+            Shop Now →
+          </Link>
+          <Link
+            to="/about"
+            className="inline-flex items-center rounded-[999px] border-[1.5px] border-[rgba(132,165,157,0.35)] bg-transparent px-[34px] py-[15px] text-[0.85rem] font-semibold uppercase tracking-[1.5px] text-[var(--text)] no-underline transition hover:border-[var(--sage)] hover:bg-[var(--sage)] hover:text-white"
+          >
+            Our Story
+          </Link>
         </div>
         <div className="flex gap-[40px] mt-[50px] pt-[40px] border-t border-[rgba(132,165,157,0.2)] max-[1100px]:justify-center max-[768px]:flex-wrap">
           <div className="text-center"><span className="font-['Playfair_Display',serif] text-[2rem] font-bold text-[var(--deep)] block">12K+</span><span className="text-[0.75rem] text-[var(--light-text)] tracking-[1px]">Happy Customers</span></div>

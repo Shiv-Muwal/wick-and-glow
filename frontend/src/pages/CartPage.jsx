@@ -10,7 +10,10 @@ export default function CartPage() {
       <div className="mx-auto max-w-lg px-6 py-[120px] text-center max-[1024px]:pt-[150px]">
         <h1 className="font-['Playfair_Display',serif] text-2xl text-[var(--deep)]">Your cart is empty</h1>
         <p className="mt-3 text-[0.9rem] text-[var(--light-text)]">Add candles from the shop — checkout works as a guest.</p>
-        <Link to="/shop" className="btn-primary mt-8 inline-block">
+        <Link
+          to="/shop"
+          className="mt-8 inline-flex rounded-[999px] bg-[var(--deep)] px-[28px] py-[14px] text-[0.78rem] font-semibold uppercase tracking-[1.4px] text-[var(--cream)] no-underline transition hover:bg-[var(--gold)] hover:text-[var(--deep)]"
+        >
           Continue shopping
         </Link>
       </div>
@@ -55,12 +58,21 @@ export default function CartPage() {
                   <p className="text-[0.72rem] text-[var(--light-text)]">Max {cap} in stock</p>
                 ) : null}
               </div>
-              <div className="cart-qty">
-                <button type="button" className="qty-btn" onClick={() => changeQty(item.id, -1)}>
+              <div className="flex items-center gap-[10px]">
+                <button
+                  type="button"
+                  className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-[var(--blush)] text-[1rem] text-[var(--text)] transition hover:bg-[var(--sage)] hover:text-white"
+                  onClick={() => changeQty(item.id, -1)}
+                >
                   −
                 </button>
-                <span className="qty-num">{item.qty}</span>
-                <button type="button" className="qty-btn disabled:opacity-40" disabled={atMax} onClick={() => changeQty(item.id, 1)}>
+                <span className="min-w-[20px] text-center text-[0.9rem] font-semibold">{item.qty}</span>
+                <button
+                  type="button"
+                  className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-[var(--blush)] text-[1rem] text-[var(--text)] transition hover:bg-[var(--sage)] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  disabled={atMax}
+                  onClick={() => changeQty(item.id, 1)}
+                >
                   +
                 </button>
               </div>
@@ -80,7 +92,10 @@ export default function CartPage() {
         <div className="text-lg font-semibold text-[var(--deep)]">
           Subtotal <span className="ml-4">₹{cartTotal.toLocaleString('en-IN')}</span>
         </div>
-        <Link to="/checkout" className="btn-primary text-center no-underline px-10 py-3">
+        <Link
+          to="/checkout"
+          className="inline-flex rounded-[999px] bg-[var(--deep)] px-[28px] py-[14px] text-[0.78rem] font-semibold uppercase tracking-[1.4px] text-[var(--cream)] no-underline transition hover:bg-[var(--gold)] hover:text-[var(--deep)]"
+        >
           Proceed to checkout
         </Link>
       </div>

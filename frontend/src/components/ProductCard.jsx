@@ -43,23 +43,37 @@ export default function ProductCard({ product, onQuickView }) {
     onQuickView(product);
   };
 
-  const badgeClass = product.badge === 'new' ? 'new' : product.badge === 'limited' ? 'sale' : '';
-  const badgeTone = product.badge === 'premium' ? 'bg-[#84a59d]' : '';
   const badgeLabelMap = {
     bestseller: 'Bestseller',
     new: 'New',
     premium: 'Premium',
     limited: 'Limited',
   };
+  const badgeUi = out
+    ? 'bg-red-600 text-white'
+    : product.badge === 'new'
+      ? 'bg-[var(--sage)] text-white'
+      : product.badge === 'limited'
+        ? 'bg-[#ef4444] text-white'
+        : product.badge === 'premium'
+          ? 'bg-[#84a59d] text-white'
+          : 'bg-[var(--deep)] text-[var(--cream)]';
 
   return (
-    <Link to={`/product/${product.id}`} className="product-card reveal">
-      <div className={`product-image ${product.imageUrl ? '' : product.imageClass || ''}`}>
+    <Link
+      to={`/product/${product.id}`}
+      className="group relative block overflow-hidden rounded-[20px] bg-white shadow-[var(--shadow)] transition-all hover:-translate-y-[10px] hover:shadow-[var(--shadow-hover)]"
+    >
+      <div
+        className={`relative flex h-[280px] items-center justify-center overflow-hidden bg-[var(--blush)] ${
+          product.imageUrl ? '' : product.imageClass || ''
+        }`}
+      >
         {product.imageUrl ? (
           <img
             src={product.imageUrl}
             alt={product.name}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.07]"
             loading="lazy"
           />
         ) : (
@@ -68,38 +82,61 @@ export default function ProductCard({ product, onQuickView }) {
           </div>
         )}
         {out ? (
-          <span className="product-badge sale">Out of stock</span>
+          <span
+            className={`absolute left-[16px] top-[16px] rounded-[20px] px-[12px] py-[4px] text-[0.68rem] font-semibold uppercase tracking-[1px] ${badgeUi}`}
+          >
+            Out of stock
+          </span>
         ) : product.badge ? (
-          <span className={`product-badge ${badgeClass} ${badgeTone}`}>
+          <span
+            className={`absolute left-[16px] top-[16px] rounded-[20px] px-[12px] py-[4px] text-[0.68rem] font-semibold uppercase tracking-[1px] ${badgeUi}`}
+          >
             {badgeLabelMap[product.badge] || product.badge}
           </span>
         ) : null}
-        <button type="button" className="wishlist-btn" onClick={handleWishlist} aria-label="Wishlist">
+        <button
+          type="button"
+          className="absolute right-[16px] top-[16px] z-[2] flex h-[34px] w-[34px] items-center justify-center rounded-full bg-white/90 text-[15px] text-[var(--light-text)] shadow-[0_2px_10px_rgba(0,0,0,0.12)] transition-colors hover:text-[var(--sage)]"
+          onClick={handleWishlist}
+          aria-label="Wishlist"
+        >
           {wishlisted ? '♥' : '♡'}
         </button>
-        <div className="quick-view" onClick={handleQuickView} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && handleQuickView(e)}>
+        <div
+          className="absolute bottom-[14px] left-1/2 z-[2] w-[calc(100%-28px)] -translate-x-1/2 rounded-[999px] bg-white/92 px-[14px] py-[9px] text-center text-[0.72rem] font-semibold uppercase tracking-[1px] text-[var(--text)] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+          onClick={handleQuickView}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && handleQuickView(e)}
+        >
           Quick View
         </div>
       </div>
-      <div className="product-info">
-        <div className="product-category">
+      <div className="p-[18px]">
+        <div className="mb-[6px] text-[0.66rem] font-semibold uppercase tracking-[2px] text-[var(--light-text)]">
           {product.category}
           {product.fragrance ? ` · ${product.fragrance}` : ''}
         </div>
-        <div className="product-name">{product.name}</div>
+        <div className="mb-[10px] font-['Playfair_Display',serif] text-[1.55rem] leading-[1.2] text-[var(--deep)]">
+          {product.name}
+        </div>
         {lowStock ? (
-          <div className="text-[0.68rem] font-semibold uppercase tracking-wide text-amber-800 mb-1">
+          <div className="mb-1 text-[0.68rem] font-semibold uppercase tracking-wide text-amber-800">
             Only {cap} left
           </div>
         ) : null}
-        <div className="product-meta">
-          <div className="product-price">
+        <div className="mt-[2px] flex items-center justify-between gap-[10px]">
+          <div className="text-[1.65rem] font-bold text-[var(--text)]">
             ₹{product.price}
-            {product.originalPrice ? <span className="original">₹{product.originalPrice}</span> : null}
+            {product.originalPrice ? (
+              <span className="ml-[8px] text-[0.95rem] font-medium text-[var(--light-text)] line-through">
+                ₹{product.originalPrice}
+              </span>
+            ) : null}
           </div>
           <button
             type="button"
-            className={`add-cart ${added ? 'added' : ''} ${out ? 'opacity-50 pointer-events-none' : ''}`}
+            className={`rounded-[999px] bg-[var(--deep)] px-[20px] py-[10px] text-[0.74rem] font-semibold uppercase tracking-[1.2px] text-[var(--cream)] transition hover:bg-[var(--gold)] hover:text-[var(--deep)] ${added ? 'bg-[var(--sage)] text-white' : ''} ${out ? 'pointer-events-none opacity-50' : ''}`}
             onClick={handleAddToCart}
             disabled={out}
           >

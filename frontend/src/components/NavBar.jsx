@@ -19,9 +19,18 @@ export default function NavBar({ onCartOpen }) {
   };
 
   return (
-    <nav className={`${scrolled ? 'scrolled' : ''} flex   relative justify-between `}>
-      <NavLink to="/" className="nav-logo">
-        <div className="logo-flame" />
+    <nav
+      className={`fixed left-0 right-0 top-0 z-[1000] flex items-center justify-between px-[60px] py-[20px] transition-all max-[1100px]:px-[30px] ${
+        scrolled
+          ? 'border-b border-[rgba(246,189,96,0.2)] bg-[var(--glass)] py-[14px] shadow-[0_4px_30px_rgba(44,24,16,0.1)] backdrop-blur-[20px]'
+          : 'bg-transparent'
+      }`}
+    >
+      <NavLink
+        to="/"
+        className="flex items-center gap-[10px] font-['Playfair_Display',serif] text-[1.6rem] font-bold text-[var(--deep)] no-underline"
+      >
+        <div className="h-[28px] w-[16px] rounded-[50%_50%_20%_20%] bg-[linear-gradient(180deg,#fff9c4_0%,#f6bd60_40%,#e07b39_70%,transparent_100%)] shadow-[0_0_10px_rgba(246,189,96,0.6)]" />
         Wick &amp; Glow
       </NavLink>
 
@@ -34,21 +43,21 @@ export default function NavBar({ onCartOpen }) {
       >
         <ul className="flex gap-9 max-lg:flex-col">
           <li>
-            <NavLink to="/" end>
+            <NavLink to="/" end className="text-[0.88rem] font-medium uppercase tracking-[1px] text-[var(--text)] no-underline transition-colors hover:text-[var(--sage)]">
               Home
             </NavLink>
           </li>
           <li>
-            <NavLink to="/shop">Shop</NavLink>
+            <NavLink to="/shop" className="text-[0.88rem] font-medium uppercase tracking-[1px] text-[var(--text)] no-underline transition-colors hover:text-[var(--sage)]">Shop</NavLink>
           </li>
           <li>
-            <NavLink to="/about">About</NavLink>
+            <NavLink to="/about" className="text-[0.88rem] font-medium uppercase tracking-[1px] text-[var(--text)] no-underline transition-colors hover:text-[var(--sage)]">About</NavLink>
           </li>
           <li>
-            <NavLink to="/blog">Journal</NavLink>
+            <NavLink to="/blog" className="text-[0.88rem] font-medium uppercase tracking-[1px] text-[var(--text)] no-underline transition-colors hover:text-[var(--sage)]">Journal</NavLink>
           </li>
           <li>
-            <NavLink to="/contact">Contact</NavLink>
+            <NavLink to="/contact" className="text-[0.88rem] font-medium uppercase tracking-[1px] text-[var(--text)] no-underline transition-colors hover:text-[var(--sage)]">Contact</NavLink>
           </li>
           {/*
             Phase 1: guest flow — alag page links (cart icon + footer se bhi track ho sakta hai)
@@ -109,8 +118,16 @@ export default function NavBar({ onCartOpen }) {
             </>
           )}
           */}
-          <button type="button" className="cart-btn" title="Cart" onClick={onCartOpen}>
-            🛒 <span className="cart-count">{cartCount}</span>
+          <button
+            type="button"
+            className="relative text-[1.3rem] text-[var(--text)]"
+            title="Cart"
+            onClick={onCartOpen}
+          >
+            🛒
+            <span className="absolute -right-[8px] -top-[8px] flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[var(--gold)] text-[0.65rem] font-bold text-[var(--deep)]">
+              {cartCount}
+            </span>
           </button>
         </div>
       </div>

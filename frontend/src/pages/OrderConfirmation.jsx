@@ -12,13 +12,13 @@ export default function OrderConfirmation() {
           Open this page right after checkout, track with order ID + email, or sign in to see all orders.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <Link to="/shop" className="btn-primary">
+          <Link to="/shop" className="inline-flex rounded-[999px] bg-[var(--deep)] px-[26px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--cream)] no-underline transition hover:bg-[var(--gold)] hover:text-[var(--deep)]">
             Shop
           </Link>
-          <Link to="/track-order" className="btn-secondary">
+          <Link to="/track-order" className="inline-flex rounded-[999px] border-[1.5px] border-[rgba(132,165,157,0.35)] px-[26px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--text)] no-underline transition hover:border-[var(--sage)] hover:bg-[var(--sage)] hover:text-white">
             Track order
           </Link>
-          <Link to="/dashboard" className="btn-secondary">
+          <Link to="/dashboard" className="inline-flex rounded-[999px] border-[1.5px] border-[rgba(132,165,157,0.35)] px-[26px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--text)] no-underline transition hover:border-[var(--sage)] hover:bg-[var(--sage)] hover:text-white">
             Dashboard
           </Link>
         </div>
@@ -65,13 +65,13 @@ export default function OrderConfirmation() {
           .
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <Link to="/shop" className="btn-secondary">
+          <Link to="/shop" className="inline-flex rounded-[999px] border-[1.5px] border-[rgba(132,165,157,0.35)] px-[26px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--text)] no-underline transition hover:border-[var(--sage)] hover:bg-[var(--sage)] hover:text-white">
             Continue shopping
           </Link>
-          <Link to="/track-order" className="btn-secondary">
+          <Link to="/track-order" className="inline-flex rounded-[999px] border-[1.5px] border-[rgba(132,165,157,0.35)] px-[26px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--text)] no-underline transition hover:border-[var(--sage)] hover:bg-[var(--sage)] hover:text-white">
             Track this order
           </Link>
-          <Link to="/dashboard" className="btn-primary">
+          <Link to="/dashboard" className="inline-flex rounded-[999px] bg-[var(--deep)] px-[26px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--cream)] no-underline transition hover:bg-[var(--gold)] hover:text-[var(--deep)]">
             My orders
           </Link>
         </div>
