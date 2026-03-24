@@ -7,6 +7,7 @@ import {
   Blog,
   Coupon,
   Review,
+  ContactMessage,
 } from '../models/index.js';
 import { docToAdminProduct, docToStoreProduct } from '../utils/transforms.js';
 import { uploadBuffer, destroyAsset, isCloudinaryConfigured } from '../lib/cloudinary.js';
@@ -125,6 +126,26 @@ export function adminRouter() {
           stars: '★'.repeat(x.rating) + '☆'.repeat(5 - x.rating),
           date: x.reviewDate,
           text: x.body,
+        }))
+      );
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  r.get('/contacts', async (_req, res, next) => {
+    try {
+      const rows = await ContactMessage.find().sort({ createdAt: -1 }).limit(300).lean();
+      res.json(
+        rows.map((x) => ({
+          id: String(x._id),
+          firstName: x.firstName || '',
+          lastName: x.lastName || '',
+          email: x.email || '',
+          phone: x.phone || '',
+          subject: x.subject || 'General',
+          message: x.message || '',
+          createdAt: x.createdAt || null,
         }))
       );
     } catch (e) {

@@ -2,13 +2,29 @@ import React, { useMemo, useState } from 'react';
 import { useAdmin } from '../AdminContext.jsx';
 import { SearchIcon } from '../components/logos.jsx';
 import { PRODUCT_COLUMNS, PRODUCT_CATEGORIES } from '../productsConfig.js';
-import { uploadProductImage } from '../api/client.js';
+import { uploadProductImage, postAdminProductApi } from '../api/client.js';
+import Modal from '../components/ui/Modal.jsx';
+
+const initialForm = {
+  name: '',
+  price: '',
+  stock: '',
+  category: PRODUCT_CATEGORIES[0],
+  fragrance: '',
+  description: '',
+  emoji: '🕯️',
+  id: '',
+};
 
 function Products() {
   const { state, refreshState } = useAdmin();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [uploadingId, setUploadingId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [form, setForm] = useState(initialForm);
 
   const filtered = useMemo(() => {
     return state.products.filter((p) => {
@@ -36,6 +52,53 @@ function Products() {
     }
   };
 
+  const openAddProduct = () => {
+    setForm(initialForm);
+    setFormError('');
+    setIsModalOpen(true);
+  };
+
+  const closeAddProduct = () => {
+    if (saving) return;
+    setIsModalOpen(false);
+    setFormError('');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const name = form.name.trim();
+    const fragrance = form.fragrance.trim();
+    const description = form.description.trim();
+    const price = Number(form.price);
+    const stock = Number(form.stock);
+
+    if (!name) return setFormError('Product name is required');
+    if (!Number.isFinite(price) || price <= 0) return setFormError('Enter a valid price');
+    if (!Number.isFinite(stock) || stock < 0) return setFormError('Enter a valid stock value');
+    if (!description) return setFormError('Description is required');
+
+    setSaving(true);
+    setFormError('');
+    try {
+      await postAdminProductApi({
+        id: form.id.trim() || undefined,
+        name,
+        price,
+        stock,
+        category: form.category || PRODUCT_CATEGORIES[0],
+        fragrance,
+        description,
+        emoji: form.emoji.trim() || '🕯️',
+      });
+      setIsModalOpen(false);
+      await refreshState();
+    } catch (err) {
+      setFormError(err.message || 'Could not create product');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-[18px]">
       {/* Header */}
@@ -50,6 +113,7 @@ function Products() {
         </div>
         <button
           type="button"
+          onClick={openAddProduct}
           className="inline-flex items-center gap-[7px] rounded-[10px] bg-gradient-to-br from-[var(--gold)] to-[#e8a830] px-[17px] py-[9px] text-[13px] font-medium text-[var(--dark)] shadow-[0_4px_14px_rgba(246,189,96,0.28)] transition-transform duration-150 hover:-translate-y-[2px] hover:shadow-[0_6px_20px_rgba(246,189,96,0.38)]"
         >
           <span className="flex h-[18px] w-[18px] items-center justify-center rounded-[6px] bg-[rgba(0,0,0,0.08)] text-[14px]">
@@ -156,6 +220,155 @@ function Products() {
           </tbody>
         </table>
       </div>
+
+      <Modal open={isModalOpen} onClose={closeAddProduct}>
+        <div className="w-[min(100vw-32px,600px)] rounded-[20px] border border-[var(--border)] bg-[var(--bg2)] p-[26px] shadow-[0_8px_40px_rgba(0,0,0,0.2)]">
+          <div className="mb-[18px] flex items-center justify-between">
+            <h3 className="font-['DM_Serif_Display',serif] text-[19px] text-[var(--text)]">
+              Add Product
+            </h3>
+            <button
+              type="button"
+              onClick={closeAddProduct}
+              className="flex h-[32px] w-[32px] items-center justify-center rounded-[8px] bg-[var(--surface2)] text-[16px] text-[var(--text2)] transition-colors hover:bg-[#ef4444] hover:text-white"
+              aria-label="Close add product modal"
+              disabled={saving}
+            >
+              ✕
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="grid gap-[12px]">
+            <div className="grid gap-[12px] sm:grid-cols-2">
+              <div className="flex flex-col gap-[6px]">
+                <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
+                  Product Name *
+                </label>
+                <input
+                  value={form.name}
+                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                  className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)]"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-[6px]">
+                <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
+                  Product ID (Optional)
+                </label>
+                <input
+                  value={form.id}
+                  onChange={(e) => setForm((f) => ({ ...f, id: e.target.value }))}
+                  placeholder="e.g. p-lavender-mist"
+                  className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)]"
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-[12px] sm:grid-cols-3">
+              <div className="flex flex-col gap-[6px]">
+                <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
+                  Price *
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={form.price}
+                  onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
+                  className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)]"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-[6px]">
+                <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
+                  Stock *
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={form.stock}
+                  onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))}
+                  className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)]"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-[6px]">
+                <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
+                  Category *
+                </label>
+                <select
+                  value={form.category}
+                  onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                  className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)]"
+                >
+                  {PRODUCT_CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid gap-[12px] sm:grid-cols-2">
+              <div className="flex flex-col gap-[6px]">
+                <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
+                  Fragrance
+                </label>
+                <input
+                  value={form.fragrance}
+                  onChange={(e) => setForm((f) => ({ ...f, fragrance: e.target.value }))}
+                  className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)]"
+                />
+              </div>
+              <div className="flex flex-col gap-[6px]">
+                <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
+                  Emoji
+                </label>
+                <input
+                  value={form.emoji}
+                  onChange={(e) => setForm((f) => ({ ...f, emoji: e.target.value }))}
+                  className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[20px] outline-none focus:border-[var(--sage)]"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-[6px]">
+              <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
+                Description *
+              </label>
+              <textarea
+                value={form.description}
+                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                rows={4}
+                className="w-full resize-y rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)]"
+                required
+              />
+            </div>
+
+            {formError ? (
+              <p className="text-[12px] font-medium text-red-600">{formError}</p>
+            ) : null}
+
+            <div className="mt-[6px] flex justify-end gap-[9px] border-t border-[var(--border)] pt-[16px]">
+              <button
+                type="button"
+                onClick={closeAddProduct}
+                disabled={saving}
+                className="rounded-[10px] border border-[var(--border)] bg-transparent px-[17px] py-[9px] text-[13px] font-medium text-[var(--text2)] hover:bg-[rgba(132,165,157,0.05)] hover:text-[var(--sage)] disabled:opacity-60"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="rounded-[10px] bg-[linear-gradient(135deg,var(--gold),#e8a830)] px-[17px] py-[9px] text-[13px] font-medium text-[#1f2937] shadow-[0_4px_14px_rgba(246,189,96,0.28)] transition-transform hover:-translate-y-[1px] disabled:opacity-60"
+              >
+                {saving ? 'Creating…' : 'Create Product'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </Modal>
     </div>
   );
 }

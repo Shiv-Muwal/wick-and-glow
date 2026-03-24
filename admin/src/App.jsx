@@ -9,6 +9,7 @@ import Products from './pages/Products.jsx';
 import Orders from './pages/Orders.jsx';
 import OrderDetail from './pages/OrderDetail.jsx';
 import Customers from './pages/Customers.jsx';
+import Contacts from './pages/Contacts.jsx';
 import Blogs from './pages/Blogs.jsx';
 import Inventory from './pages/Inventory.jsx';
 import Reviews from './pages/Reviews.jsx';
@@ -31,6 +32,7 @@ function App() {
                   <Route path="/orders/:orderId" element={<OrderDetail />} />
                   <Route path="/orders" element={<Orders />} />
                   <Route path="/customers" element={<Customers />} />
+                  <Route path="/contacts" element={<Contacts />} />
                   <Route path="/blogs" element={<Blogs />} />
                   <Route path="/inventory" element={<Inventory />} />
                   <Route path="/reviews" element={<Reviews />} />

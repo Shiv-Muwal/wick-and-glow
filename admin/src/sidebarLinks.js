@@ -3,6 +3,7 @@ import {
   ProductsIcon,
   OrdersIcon,
   CustomersIcon,
+  ContactsIcon,
   BlogsIcon,
   InventoryIcon,
   ReviewsIcon,
@@ -15,6 +16,7 @@ export const MAIN_LINKS = [
   { to: '/products', label: 'Products', icon: ProductsIcon },
   { to: '/orders', label: 'Orders', icon: OrdersIcon, badge: '7' },
   { to: '/customers', label: 'Customers', icon: CustomersIcon },
+  { to: '/contacts', label: 'Contacts', icon: ContactsIcon },
 ];
 
 export const CONTENT_LINKS = [

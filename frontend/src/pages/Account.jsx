@@ -72,16 +72,19 @@ export default function Account() {
       <div className="mx-auto max-w-md px-6 py-[160px] text-center max-[1024px]:pt-[180px]">
         <h1 className="font-['Playfair_Display',serif] text-2xl text-[var(--deep)]">Dashboard</h1>
         <p className="mt-3 text-[0.9rem] text-[var(--light-text)]">
-          Sign in to view your profile, orders, and saved cart.
+          Dashboard temporarily unavailable.
         </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/login" className="inline-flex rounded-[999px] bg-[var(--deep)] px-[24px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--cream)] no-underline transition hover:bg-[var(--gold)] hover:text-[var(--deep)]">
-            Sign in
-          </Link>
-          <Link to="/signup" className="inline-flex rounded-[999px] border-[1.5px] border-[rgba(132,165,157,0.35)] px-[24px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--text)] no-underline transition hover:border-[var(--sage)] hover:bg-[var(--sage)] hover:text-white">
-            Create account
-          </Link>
-        </div>
+        {/*
+          Temporary disable: auth CTA buttons
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link to="/login" className="inline-flex rounded-[999px] bg-[var(--deep)] px-[24px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--cream)] no-underline transition hover:bg-[var(--gold)] hover:text-[var(--deep)]">
+              Sign in
+            </Link>
+            <Link to="/signup" className="inline-flex rounded-[999px] border-[1.5px] border-[rgba(132,165,157,0.35)] px-[24px] py-[12px] text-[0.76rem] font-semibold uppercase tracking-[1.3px] text-[var(--text)] no-underline transition hover:border-[var(--sage)] hover:bg-[var(--sage)] hover:text-white">
+              Create account
+            </Link>
+          </div>
+        */}
       </div>
     );
   }

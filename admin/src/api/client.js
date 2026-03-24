@@ -100,6 +100,13 @@ export function restockProductApi(productId, quantity) {
   });
 }
 
+export function postAdminProductApi(body) {
+  return adminApi('/api/admin/products', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+}
+
 export function postCouponApi(body) {
   return adminApi('/api/admin/coupons', { method: 'POST', body: JSON.stringify(body) });
 }
@@ -133,6 +140,10 @@ export function deleteBlogApi(id) {
 
 export function fetchAdminReviews() {
   return adminApi('/api/admin/reviews');
+}
+
+export function fetchAdminContacts() {
+  return adminApi('/api/admin/contacts');
 }
 
 export async function uploadProductImage(productId, file) {

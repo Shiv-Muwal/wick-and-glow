@@ -11,8 +11,9 @@ import ProductDetail from './pages/ProductDetail';
 import About from './pages/About';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
+// Temporarily disabled auth pages
+// import Login from './pages/Login';
+// import Signup from './pages/Signup';
 import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import Account from './pages/Account';
@@ -34,8 +35,11 @@ export default function App() {
               <Route path="about" element={<About />} />
               <Route path="blog" element={<Blog />} />
               <Route path="contact" element={<Contact />} />
-              <Route path="login" element={<Login />} />
-              <Route path="signup" element={<Signup />} />
+              {/*
+                Temporary disable: login/signup routes
+                <Route path="login" element={<Login />} />
+                <Route path="signup" element={<Signup />} />
+              */}
               <Route path="order-confirmation" element={<OrderConfirmation />} />
               <Route path="account" element={<Account />} />
               <Route path="dashboard" element={<Account />} />

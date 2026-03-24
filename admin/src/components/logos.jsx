@@ -49,6 +49,14 @@ export const CustomersIcon = (props) => (
   </Svg>
 );
 
+export const ContactsIcon = (props) => (
+  <Svg {...props}>
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    <line x1="8" y1="8" x2="16" y2="8" />
+    <line x1="8" y1="12" x2="14" y2="12" />
+  </Svg>
+);
+
 export const BlogsIcon = (props) => (
   <Svg {...props}>
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
