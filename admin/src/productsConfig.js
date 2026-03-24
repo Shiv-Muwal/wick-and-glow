@@ -1,4 +1,4 @@
-export const PRODUCT_COLUMNS = ['Image', 'Product', 'Price', 'Stock', 'Category'];
+export const PRODUCT_COLUMNS = ['Image', 'Product', 'Price', 'Stock', 'Category', 'Actions'];
 
 export const PRODUCT_CATEGORIES = [
   'Floral',

@@ -107,6 +107,19 @@ export function postAdminProductApi(body) {
   });
 }
 
+export function patchAdminProductApi(productId, body) {
+  return adminApi(`/api/admin/products/${encodeURIComponent(productId)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  });
+}
+
+export function deleteAdminProductApi(productId) {
+  return adminApi(`/api/admin/products/${encodeURIComponent(productId)}`, {
+    method: 'DELETE',
+  });
+}
+
 export function postCouponApi(body) {
   return adminApi('/api/admin/coupons', { method: 'POST', body: JSON.stringify(body) });
 }

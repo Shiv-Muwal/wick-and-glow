@@ -1,2 +1,6 @@
 node_modules/
 .env
+
+# Local product image fallbacks (keep folder, ignore files)
+public/uploads/products/*
+!public/uploads/products/.gitkeep

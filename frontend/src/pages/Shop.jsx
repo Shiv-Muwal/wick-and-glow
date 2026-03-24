@@ -162,7 +162,7 @@ max-[1100px]:grid-cols-1">
           </button>
         </aside>
 
-        <div>
+        <div className="min-w-0">
           <div className="mb-[30px] flex items-center justify-between">
             <span className="text-[0.88rem] text-[var(--light-text)]">Showing {sorted.length} products</span>
             <select
@@ -176,7 +176,7 @@ max-[1100px]:grid-cols-1">
               <option value="name-asc">Name: A–Z</option>
             </select>
           </div>
-          <div className="grid grid-cols-4 gap-[30px] max-[1300px]:grid-cols-3 max-[900px]:grid-cols-2 max-[640px]:grid-cols-1" id="products-grid">
+          <div className="grid grid-cols-3 gap-[30px] max-[900px]:grid-cols-2 max-[640px]:grid-cols-1" id="products-grid">
             {sorted.map((p) => (
               <ProductCard key={p.id} product={p} onQuickView={setQuickViewProduct} />
             ))}

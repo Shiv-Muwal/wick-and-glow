@@ -1,8 +1,13 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAdmin } from '../AdminContext.jsx';
 import { SearchIcon } from '../components/logos.jsx';
 import { PRODUCT_COLUMNS, PRODUCT_CATEGORIES } from '../productsConfig.js';
-import { uploadProductImage, postAdminProductApi } from '../api/client.js';
+import {
+  uploadProductImage,
+  postAdminProductApi,
+  patchAdminProductApi,
+  deleteAdminProductApi,
+} from '../api/client.js';
 import Modal from '../components/ui/Modal.jsx';
 
 const initialForm = {
@@ -12,7 +17,6 @@ const initialForm = {
   category: PRODUCT_CATEGORIES[0],
   fragrance: '',
   description: '',
-  emoji: '🕯️',
   id: '',
 };
 
@@ -20,11 +24,35 @@ function Products() {
   const { state, refreshState } = useAdmin();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
-  const [uploadingId, setUploadingId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [formError, setFormError] = useState('');
   const [form, setForm] = useState(initialForm);
+  /** New file chosen in modal; uploaded after product save */
+  const [imageDraft, setImageDraft] = useState(null);
+  /** Saved image URL when editing (for preview if no new file) */
+  const [existingImageUrl, setExistingImageUrl] = useState(null);
+  const [blobPreviewUrl, setBlobPreviewUrl] = useState(null);
+
+  useEffect(() => {
+    if (!imageDraft) {
+      setBlobPreviewUrl(null);
+      return undefined;
+    }
+    const url = URL.createObjectURL(imageDraft);
+    setBlobPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [imageDraft]);
+
+  const categoryOptions = useMemo(() => {
+    const set = new Set(PRODUCT_CATEGORIES);
+    state.products.forEach((p) => {
+      if (p.category) set.add(p.category);
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [state.products]);
 
   const filtered = useMemo(() => {
     return state.products.filter((p) => {
@@ -37,31 +65,59 @@ function Products() {
     });
   }, [state.products, search, category]);
 
-  const handleImageChange = async (productId, e) => {
+  const openAddProduct = () => {
+    setEditingId(null);
+    setForm(initialForm);
+    setImageDraft(null);
+    setExistingImageUrl(null);
+    setFormError('');
+    setIsModalOpen(true);
+  };
+
+  const openEditProduct = (p) => {
+    setEditingId(p.id);
+    setForm({
+      name: p.name || '',
+      price: String(p.price ?? ''),
+      stock: String(p.stock ?? ''),
+      category: p.category || PRODUCT_CATEGORIES[0],
+      fragrance: p.fragrance || '',
+      description: p.description || '',
+      id: p.id,
+    });
+    setImageDraft(null);
+    setExistingImageUrl(p.imageUrl || null);
+    setFormError('');
+    setIsModalOpen(true);
+  };
+
+  const handleModalImagePick = (e) => {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
-    setUploadingId(productId);
-    try {
-      await uploadProductImage(productId, file);
-      await refreshState();
-    } catch (err) {
-      window.alert(err.message || 'Upload failed');
-    } finally {
-      setUploadingId(null);
-    }
-  };
-
-  const openAddProduct = () => {
-    setForm(initialForm);
-    setFormError('');
-    setIsModalOpen(true);
+    setImageDraft(file);
   };
 
   const closeAddProduct = () => {
     if (saving) return;
     setIsModalOpen(false);
+    setEditingId(null);
+    setImageDraft(null);
+    setExistingImageUrl(null);
     setFormError('');
+  };
+
+  const handleDeleteProduct = async (p) => {
+    if (!window.confirm(`Delete “${p.name}”? This cannot be undone.`)) return;
+    setDeletingId(p.id);
+    try {
+      await deleteAdminProductApi(p.id);
+      await refreshState();
+    } catch (err) {
+      window.alert(err.message || 'Could not delete product');
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -80,24 +136,51 @@ function Products() {
     setSaving(true);
     setFormError('');
     try {
-      await postAdminProductApi({
-        id: form.id.trim() || undefined,
-        name,
-        price,
-        stock,
-        category: form.category || PRODUCT_CATEGORIES[0],
-        fragrance,
-        description,
-        emoji: form.emoji.trim() || '🕯️',
-      });
+      let productId = editingId;
+
+      if (editingId) {
+        await patchAdminProductApi(editingId, {
+          name,
+          price,
+          stock,
+          category: form.category || PRODUCT_CATEGORIES[0],
+          fragrance,
+          description,
+        });
+      } else {
+        const created = await postAdminProductApi({
+          id: form.id.trim() || undefined,
+          name,
+          price,
+          stock,
+          category: form.category || PRODUCT_CATEGORIES[0],
+          fragrance,
+          description,
+        });
+        productId = created?.id;
+      }
+
+      if (imageDraft && productId) {
+        try {
+          await uploadProductImage(productId, imageDraft);
+        } catch (upErr) {
+          window.alert(upErr.message || 'Product saved, but image upload failed. Edit the product to try again.');
+        }
+      }
+
       setIsModalOpen(false);
+      setEditingId(null);
+      setImageDraft(null);
+      setExistingImageUrl(null);
       await refreshState();
     } catch (err) {
-      setFormError(err.message || 'Could not create product');
+      setFormError(err.message || (editingId ? 'Could not update product' : 'Could not create product'));
     } finally {
       setSaving(false);
     }
   };
+
+  const modalImageSrc = imageDraft ? blobPreviewUrl : existingImageUrl;
 
   return (
     <div className="flex flex-col gap-[18px]">
@@ -108,7 +191,7 @@ function Products() {
             Products
           </h2>
           <p className="mt-[2px] text-[12.5px] text-[var(--text2)]">
-            Manage your candle collection · Cloudinary image upload per row
+            Manage your candle collection · upload product images when adding or editing
           </p>
         </div>
         <button
@@ -171,24 +254,14 @@ function Products() {
                   className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--surface2)]"
                 >
                   <td className="px-[15px] py-[13px] align-middle">
-                    <div className="flex flex-col items-start gap-[6px]">
-                      <div className="flex h-[42px] w-[42px] items-center justify-center overflow-hidden rounded-[10px] bg-gradient-to-br from-[var(--cream)] to-[var(--blush)] text-[20px]">
-                        {p.imageUrl ? (
-                          <img src={p.imageUrl} alt="" className="h-full w-full object-cover" />
-                        ) : (
-                          p.emoji
-                        )}
-                      </div>
-                      <label className="cursor-pointer text-[10px] font-semibold text-[var(--sage)] hover:underline">
-                        {uploadingId === p.id ? 'Uploading…' : 'Upload image'}
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp,image/gif"
-                          className="hidden"
-                          disabled={uploadingId === p.id}
-                          onChange={(e) => handleImageChange(p.id, e)}
-                        />
-                      </label>
+                    <div className="flex h-[48px] w-[48px] items-center justify-center overflow-hidden rounded-[10px] bg-gradient-to-br from-[var(--cream)] to-[var(--blush)] text-[22px] text-[var(--text2)]">
+                      {p.imageUrl ? (
+                        <img src={p.imageUrl} alt="" className="h-full w-full object-cover" />
+                      ) : (
+                        <span title="No image yet — add one in Add / Edit product" className="select-none">
+                          🕯️
+                        </span>
+                      )}
                     </div>
                   </td>
                   <td className="px-[15px] py-[13px] align-middle">
@@ -214,6 +287,26 @@ function Products() {
                       {p.category}
                     </span>
                   </td>
+                  <td className="px-[15px] py-[13px] align-middle">
+                    <div className="flex flex-wrap items-center gap-[8px]">
+                      <button
+                        type="button"
+                        onClick={() => openEditProduct(p)}
+                        disabled={deletingId === p.id}
+                        className="inline-flex items-center gap-[6px] rounded-[8px] border border-[var(--border)] bg-[var(--surface2)] px-[10px] py-[6px] text-[12px] font-semibold text-[var(--text2)] transition-colors hover:border-[var(--sage)] hover:text-[var(--sage)] disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        ✏️ Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteProduct(p)}
+                        disabled={deletingId === p.id}
+                        className="inline-flex items-center gap-[6px] rounded-[8px] border border-[rgba(239,68,68,0.25)] bg-[rgba(239,68,68,0.08)] px-[10px] py-[6px] text-[12px] font-semibold text-[#dc2626] transition-colors hover:bg-[#dc2626] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {deletingId === p.id ? '…' : '🗑️ Delete'}
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               );
             })}
@@ -222,15 +315,15 @@ function Products() {
       </div>
 
       <Modal open={isModalOpen} onClose={closeAddProduct}>
-        <div className="w-[min(100vw-32px,600px)] rounded-[20px] border border-[var(--border)] bg-[var(--bg2)] p-[26px] shadow-[0_8px_40px_rgba(0,0,0,0.2)]">
-          <div className="mb-[18px] flex items-center justify-between">
+        <div className="flex max-h-[min(100dvh-32px,calc(100vh-32px))] w-full min-w-0 flex-col overflow-hidden rounded-[20px] border border-[var(--border)] bg-[var(--bg2)] shadow-[0_8px_40px_rgba(0,0,0,0.2)]">
+          <div className="flex shrink-0 items-center justify-between px-[26px] pt-[26px] pb-[14px]">
             <h3 className="font-['DM_Serif_Display',serif] text-[19px] text-[var(--text)]">
-              Add Product
+              {editingId ? 'Edit Product' : 'Add Product'}
             </h3>
             <button
               type="button"
               onClick={closeAddProduct}
-              className="flex h-[32px] w-[32px] items-center justify-center rounded-[8px] bg-[var(--surface2)] text-[16px] text-[var(--text2)] transition-colors hover:bg-[#ef4444] hover:text-white"
+              className="flex h-[32px] w-[32px] shrink-0 items-center justify-center rounded-[8px] bg-[var(--surface2)] text-[16px] text-[var(--text2)] transition-colors hover:bg-[#ef4444] hover:text-white"
               aria-label="Close add product modal"
               disabled={saving}
             >
@@ -238,9 +331,12 @@ function Products() {
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="grid gap-[12px]">
-            <div className="grid gap-[12px] sm:grid-cols-2">
-              <div className="flex flex-col gap-[6px]">
+          <form
+            onSubmit={handleSubmit}
+            className="grid min-h-0 min-w-0 flex-1 gap-[12px] overflow-y-auto overflow-x-hidden overscroll-y-contain px-[26px] pb-[26px] [scrollbar-gutter:stable]"
+          >
+            <div className="grid min-w-0 grid-cols-1 gap-[12px] sm:grid-cols-2">
+              <div className="flex min-w-0 flex-col gap-[6px]">
                 <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
                   Product Name *
                 </label>
@@ -251,21 +347,22 @@ function Products() {
                   required
                 />
               </div>
-              <div className="flex flex-col gap-[6px]">
+              <div className="flex min-w-0 flex-col gap-[6px]">
                 <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
-                  Product ID (Optional)
+                  {editingId ? 'Product ID' : 'Product ID (Optional)'}
                 </label>
                 <input
                   value={form.id}
                   onChange={(e) => setForm((f) => ({ ...f, id: e.target.value }))}
                   placeholder="e.g. p-lavender-mist"
-                  className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)]"
+                  disabled={!!editingId}
+                  className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)] disabled:cursor-not-allowed disabled:opacity-70"
                 />
               </div>
             </div>
 
-            <div className="grid gap-[12px] sm:grid-cols-3">
-              <div className="flex flex-col gap-[6px]">
+            <div className="grid min-w-0 grid-cols-1 gap-[12px] sm:grid-cols-3">
+              <div className="flex min-w-0 flex-col gap-[6px]">
                 <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
                   Price *
                 </label>
@@ -278,7 +375,7 @@ function Products() {
                   required
                 />
               </div>
-              <div className="flex flex-col gap-[6px]">
+              <div className="flex min-w-0 flex-col gap-[6px]">
                 <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
                   Stock *
                 </label>
@@ -291,7 +388,7 @@ function Products() {
                   required
                 />
               </div>
-              <div className="flex flex-col gap-[6px]">
+              <div className="flex min-w-0 flex-col gap-[6px]">
                 <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
                   Category *
                 </label>
@@ -300,7 +397,7 @@ function Products() {
                   onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
                   className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)]"
                 >
-                  {PRODUCT_CATEGORIES.map((cat) => (
+                  {categoryOptions.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
                     </option>
@@ -309,30 +406,60 @@ function Products() {
               </div>
             </div>
 
-            <div className="grid gap-[12px] sm:grid-cols-2">
-              <div className="flex flex-col gap-[6px]">
-                <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
-                  Fragrance
-                </label>
-                <input
-                  value={form.fragrance}
-                  onChange={(e) => setForm((f) => ({ ...f, fragrance: e.target.value }))}
-                  className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)]"
-                />
-              </div>
-              <div className="flex flex-col gap-[6px]">
-                <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
-                  Emoji
-                </label>
-                <input
-                  value={form.emoji}
-                  onChange={(e) => setForm((f) => ({ ...f, emoji: e.target.value }))}
-                  className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[20px] outline-none focus:border-[var(--sage)]"
-                />
+            <div className="flex min-w-0 flex-col gap-[6px]">
+              <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
+                Fragrance
+              </label>
+              <input
+                value={form.fragrance}
+                onChange={(e) => setForm((f) => ({ ...f, fragrance: e.target.value }))}
+                className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)]"
+              />
+            </div>
+
+            <div className="flex min-w-0 flex-col gap-[8px]">
+              <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
+                Product image
+              </label>
+              <div className="flex min-w-0 flex-wrap items-start gap-[14px]">
+                <div className="flex h-[88px] w-[88px] shrink-0 items-center justify-center overflow-hidden rounded-[12px] border border-[var(--border)] bg-[var(--surface2)] text-[28px] text-[var(--text3)]">
+                  {modalImageSrc ? (
+                    <img src={modalImageSrc} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="select-none" aria-hidden>
+                      🕯️
+                    </span>
+                  )}
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col gap-[8px]">
+                  <label className="inline-flex w-fit cursor-pointer rounded-[10px] border border-[var(--border)] bg-[var(--surface)] px-[14px] py-[8px] text-[12px] font-semibold text-[var(--sage)] transition-colors hover:bg-[rgba(132,165,157,0.08)]">
+                    {imageDraft ? 'Replace image…' : 'Choose image…'}
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      className="hidden"
+                      disabled={saving}
+                      onChange={handleModalImagePick}
+                    />
+                  </label>
+                  {imageDraft ? (
+                    <button
+                      type="button"
+                      disabled={saving}
+                      onClick={() => setImageDraft(null)}
+                      className="w-fit rounded-[8px] border border-[var(--border)] px-[12px] py-[6px] text-[11.5px] font-medium text-[var(--text2)] hover:border-[var(--sage)] hover:text-[var(--sage)] disabled:opacity-50"
+                    >
+                      Clear new selection
+                    </button>
+                  ) : null}
+                  <p className="text-[11px] leading-relaxed text-[var(--text2)]">
+                    JPEG, PNG, WebP or GIF. Image uploads after you save (Cloudinary must be configured on the server).
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col gap-[6px]">
+            <div className="flex min-w-0 flex-col gap-[6px]">
               <label className="text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[var(--text2)]">
                 Description *
               </label>
@@ -340,7 +467,7 @@ function Products() {
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                 rows={4}
-                className="w-full resize-y rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)]"
+                className="max-w-full min-h-[100px] w-full resize-y break-words rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none focus:border-[var(--sage)]"
                 required
               />
             </div>
@@ -363,7 +490,7 @@ function Products() {
                 disabled={saving}
                 className="rounded-[10px] bg-[linear-gradient(135deg,var(--gold),#e8a830)] px-[17px] py-[9px] text-[13px] font-medium text-[#1f2937] shadow-[0_4px_14px_rgba(246,189,96,0.28)] transition-transform hover:-translate-y-[1px] disabled:opacity-60"
               >
-                {saving ? 'Creating…' : 'Create Product'}
+                {saving ? (editingId ? 'Saving…' : 'Creating…') : editingId ? 'Save changes' : 'Create Product'}
               </button>
             </div>
           </form>

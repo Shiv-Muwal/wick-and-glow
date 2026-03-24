@@ -1,5 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import cors from 'cors';
 import { connectMongo } from './config/mongoose.js';
 import { seedIfEmpty } from './seed/seedDatabase.js';
@@ -21,7 +23,14 @@ const MONGODB_URI =
 
 const cloudinaryReady = configureCloudinary();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const publicUploadsRoot = path.join(__dirname, '..', 'public', 'uploads');
+
 const app = express();
+
+/** Local product images (fallback when Cloudinary fails or is unset) */
+app.use('/uploads', express.static(publicUploadsRoot));
 
 app.use(
   cors({

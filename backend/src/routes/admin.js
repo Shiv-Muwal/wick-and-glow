@@ -11,6 +11,7 @@ import {
 } from '../models/index.js';
 import { docToAdminProduct, docToStoreProduct } from '../utils/transforms.js';
 import { uploadBuffer, destroyAsset, isCloudinaryConfigured } from '../lib/cloudinary.js';
+import { saveProductImageToDisk } from '../lib/localProductImage.js';
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -236,21 +237,47 @@ export function adminRouter() {
     },
     async (req, res, next) => {
       try {
-        if (!isCloudinaryConfigured()) {
-          return res.status(503).json({ error: 'Cloudinary is not configured' });
-        }
         if (!req.file?.buffer) {
           return res.status(400).json({ error: 'file field required (multipart)' });
         }
         const product = await Product.findById(req.params.id);
         if (!product) return res.status(404).json({ error: 'Not found' });
-        if (product.cloudinaryPublicId) {
-          await destroyAsset(product.cloudinaryPublicId);
+
+        const oldPublicId = product.cloudinaryPublicId ? String(product.cloudinaryPublicId) : '';
+        let imageUrl = '';
+        let cloudinaryPublicId = '';
+
+        if (isCloudinaryConfigured()) {
+          try {
+            const result = await uploadBuffer(req.file.buffer, { folder: 'wicknglow/products' });
+            imageUrl = result.secure_url;
+            cloudinaryPublicId = result.public_id ? String(result.public_id) : '';
+          } catch (cloudErr) {
+            console.warn(
+              '[admin] Cloudinary product image upload failed — using local disk fallback:',
+              cloudErr?.message || cloudErr
+            );
+          }
         }
-        const result = await uploadBuffer(req.file.buffer, { folder: 'wicknglow/products' });
-        product.imageUrl = result.secure_url;
-        product.cloudinaryPublicId = result.public_id;
+
+        if (!imageUrl) {
+          imageUrl = await saveProductImageToDisk(
+            req.file.buffer,
+            req.params.id,
+            req.file.mimetype || 'image/jpeg',
+            req
+          );
+          cloudinaryPublicId = '';
+        }
+
+        product.imageUrl = imageUrl;
+        product.cloudinaryPublicId = cloudinaryPublicId;
         await product.save();
+
+        if (oldPublicId && cloudinaryPublicId !== oldPublicId) {
+          destroyAsset(oldPublicId).catch(() => {});
+        }
+
         res.json({
           imageUrl: product.imageUrl,
           cloudinaryPublicId: product.cloudinaryPublicId,

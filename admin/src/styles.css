@@ -149,12 +149,14 @@ body {
 
 .modal-panel {
   width: 100%;
-  max-width: 480px;
+  max-width: min(600px, calc(100vw - 32px));
+  min-width: 0;
   border-radius: 18px;
   border: 1px solid rgba(132, 165, 157, 0.28);
   background-color: var(--bg2);
   box-shadow: 0 22px 70px rgba(15, 23, 42, 0.32);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .modal-header {

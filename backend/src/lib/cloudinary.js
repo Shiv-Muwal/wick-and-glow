@@ -34,8 +34,15 @@ export function uploadBuffer(buffer, options = {}) {
         ...(options.publicId ? { public_id: options.publicId } : {}),
       },
       (err, result) => {
-        if (err) reject(err);
-        else resolve(result);
+        if (err) {
+          const msg =
+            err.message ||
+            err.error?.message ||
+            (typeof err === 'string' ? err : JSON.stringify(err));
+          reject(new Error(msg));
+          return;
+        }
+        resolve(result);
       }
     );
     stream.end(buffer);
