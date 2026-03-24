@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { clearAdminSessionToken } from '../api/client.js';
-import { LogoutIcon, SearchIcon, BellIcon } from './logos.jsx';
+import { clearAdminSessionToken, getAdminProfileEmail } from '../api/client.js';
+import { LogoutIcon, SearchIcon, BellIcon, SettingsIcon } from './logos.jsx';
 import { MAIN_LINKS, CONTENT_LINKS, SYSTEM_LINKS } from '../sidebarLinks.js';
 
 const TITLE_MAP = {
@@ -9,12 +10,23 @@ const TITLE_MAP = {
   '/products': 'Products',
   '/orders': 'Orders',
   '/customers': 'Customers',
+  '/contacts': 'Contacts',
   '/blogs': 'Blog Management',
   '/inventory': 'Inventory',
   '/reviews': 'Reviews',
   '/coupons': 'Coupons',
   '/settings': 'Settings',
 };
+
+const ADMIN_DISPLAY_NAME = import.meta.env.VITE_ADMIN_DISPLAY_NAME || 'Admin User';
+const ADMIN_EMAIL_FALLBACK = import.meta.env.VITE_ADMIN_EMAIL || 'hello@wickandglow.com';
+
+function initialsFromDisplayName(name) {
+  const parts = String(name).trim().split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  if (parts.length === 1 && parts[0].length >= 2) return parts[0].slice(0, 2).toUpperCase();
+  return 'AD';
+}
 
 function SidebarLayout({ children }) {
   const location = useLocation();
@@ -24,6 +36,59 @@ function SidebarLayout({ children }) {
       ? 'Order details'
       : TITLE_MAP[location.pathname] || 'Dashboard';
   const [collapsed, setCollapsed] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [profileMenuBox, setProfileMenuBox] = useState(null);
+  const profileMenuRef = useRef(null);
+  const avatarBtnRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (!profileMenuOpen) {
+      setProfileMenuBox(null);
+      return undefined;
+    }
+    function updateProfileMenuPosition() {
+      const el = avatarBtnRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const vw = window.innerWidth;
+      const margin = 12;
+      const width = Math.min(260, Math.max(0, vw - 2 * margin));
+      let right = vw - rect.right;
+      const left = rect.right - width;
+      if (left < margin) right = vw - margin - width;
+      if (right < margin) right = margin;
+      setProfileMenuBox({
+        top: rect.bottom + 8,
+        right,
+        width,
+      });
+    }
+    updateProfileMenuPosition();
+    window.addEventListener('resize', updateProfileMenuPosition);
+    window.addEventListener('scroll', updateProfileMenuPosition, true);
+    return () => {
+      window.removeEventListener('resize', updateProfileMenuPosition);
+      window.removeEventListener('scroll', updateProfileMenuPosition, true);
+    };
+  }, [profileMenuOpen]);
+
+  useEffect(() => {
+    if (!profileMenuOpen) return undefined;
+    function handleClickOutside(e) {
+      if (avatarBtnRef.current?.contains(e.target)) return;
+      if (profileMenuRef.current?.contains(e.target)) return;
+      setProfileMenuOpen(false);
+    }
+    function handleEscape(e) {
+      if (e.key === 'Escape') setProfileMenuOpen(false);
+    }
+    document.addEventListener('click', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [profileMenuOpen]);
 
   return (
     <div className="flex min-h-screen bg-[var(--bg)]">
@@ -187,14 +252,14 @@ function SidebarLayout({ children }) {
 
       {/* Main area with topbar */}
       <div
-        className={`flex min-h-screen flex-1 flex-col transition-[margin-left] duration-300 ${
+        className={`flex min-h-screen min-w-0 flex-1 flex-col transition-[margin-left] duration-300 ${
           collapsed ? 'ml-[72px]' : 'ml-[260px]'
         }`}
       >
-        <header className="sticky top-0 z-40 flex h-[70px] items-center gap-[14px] border-b border-[var(--border)] bg-[var(--bg2)] px-[28px] backdrop-blur-[20px]">
+        <header className="sticky top-0 z-40 flex h-[70px] min-w-0 items-center gap-[14px] border-b border-[var(--border)] bg-[var(--bg2)] px-[28px] backdrop-blur-[20px]">
           <h1
             id="page-title"
-            className="flex-1 font-['DM_Serif_Display',serif] text-[21px] text-[var(--text)]"
+            className="min-w-0 flex-1 truncate font-['DM_Serif_Display',serif] text-[21px] text-[var(--text)]"
           >
             {title}
           </h1>
@@ -218,8 +283,75 @@ function SidebarLayout({ children }) {
               <BellIcon className="h-[17px] w-[17px]" />
               <div className="absolute right-[8px] top-[8px] h-[7px] w-[7px] rounded-full border-[1.5px] border-[var(--bg2)] bg-[#ef4444]" />
             </button>
-            <div className="flex h-[39px] w-[39px] items-center justify-center rounded-full border-2 border-[var(--border)] bg-gradient-to-br from-[var(--blush)] to-[var(--sage)] text-[13px] font-semibold text-white">
-              AN
+
+            <div className="relative">
+              <button
+                ref={avatarBtnRef}
+                type="button"
+                onClick={() => setProfileMenuOpen((o) => !o)}
+                aria-expanded={profileMenuOpen}
+                aria-haspopup="menu"
+                aria-label="Account menu"
+                className="flex h-[39px] w-[39px] items-center justify-center rounded-full border-2 border-[var(--border)] bg-gradient-to-br from-[var(--blush)] to-[var(--sage)] text-[13px] font-semibold text-white transition hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-[var(--sage)] focus:ring-offset-2 focus:ring-offset-[var(--bg2)]"
+              >
+                {initialsFromDisplayName(ADMIN_DISPLAY_NAME)}
+              </button>
+
+              {profileMenuOpen && profileMenuBox
+                ? createPortal(
+                    <div
+                      ref={profileMenuRef}
+                      role="menu"
+                      className="z-[60] rounded-[14px] border border-[var(--border)] bg-[var(--surface)] py-[12px] shadow-[0_12px_40px_rgba(15,23,42,0.14)]"
+                      onClick={(e) => e.stopPropagation()}
+                      style={{
+                        position: 'fixed',
+                        top: profileMenuBox.top,
+                        right: profileMenuBox.right,
+                        width: profileMenuBox.width,
+                        boxSizing: 'border-box',
+                      }}
+                    >
+                      <div className="px-[16px] pb-[12px]">
+                        <div className="font-[600] text-[14px] text-[var(--text)]">{ADMIN_DISPLAY_NAME}</div>
+                        <div className="mt-[4px] break-all text-[12px] leading-snug text-[var(--text2)]">
+                          {getAdminProfileEmail() || ADMIN_EMAIL_FALLBACK}
+                        </div>
+                      </div>
+                      <div className="mx-[12px] border-t border-[var(--border)]" />
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className={`mx-[6px] mt-[4px] flex w-[calc(100%-12px)] cursor-pointer items-center gap-[10px] rounded-[10px] px-[10px] py-[10px] text-left text-[13px] font-medium transition-colors hover:bg-[var(--surface2)] ${
+                          location.pathname === '/settings'
+                            ? 'bg-[var(--surface2)] text-[var(--sage)]'
+                            : 'bg-transparent text-[var(--text)]'
+                        }`}
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          navigate('/settings');
+                        }}
+                      >
+                        <SettingsIcon className="h-[16px] w-[16px] shrink-0 text-[var(--text2)]" />
+                        Settings
+                      </button>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className="mx-[6px] flex w-[calc(100%-12px)] items-center gap-[10px] rounded-[10px] px-[10px] py-[10px] text-left text-[13px] font-medium text-[#dc2626] transition-colors hover:bg-[rgba(239,68,68,0.08)]"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          clearAdminSessionToken();
+                          navigate('/login', { replace: true });
+                        }}
+                      >
+                        <LogoutIcon className="h-[16px] w-[16px] shrink-0 text-[#dc2626]" />
+                        Logout
+                      </button>
+                    </div>,
+                    document.body
+                  )
+                : null}
             </div>
           </div>
         </header>

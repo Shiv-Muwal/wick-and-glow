@@ -140,6 +140,15 @@ const cartSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+/** Single-row admin panel password (bcrypt). If absent, login uses ADMIN_LOGIN_PASSWORD from .env. */
+const adminCredentialsSchema = new mongoose.Schema(
+  {
+    _id: { type: String, required: true },
+    passwordHash: { type: String, required: true },
+  },
+  { _id: false }
+);
+
 export const Product =
   mongoose.models.Product || mongoose.model('Product', productSchema);
 export const Customer =
@@ -158,3 +167,6 @@ export const Review =
   mongoose.models.Review || mongoose.model('Review', reviewSchema);
 export const User = mongoose.models.User || mongoose.model('User', userSchema);
 export const Cart = mongoose.models.Cart || mongoose.model('Cart', cartSchema);
+export const AdminCredentials =
+  mongoose.models.AdminCredentials ||
+  mongoose.model('AdminCredentials', adminCredentialsSchema);

@@ -1,6 +1,24 @@
 const BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const KEY = import.meta.env.VITE_ADMIN_API_KEY || 'dev-admin-key';
 const SESSION_KEY = 'wickglow_admin_jwt';
+const PROFILE_EMAIL_KEY = 'wickglow_admin_profile_email';
+
+export function setAdminProfileEmail(email) {
+  try {
+    if (email) localStorage.setItem(PROFILE_EMAIL_KEY, String(email));
+    else localStorage.removeItem(PROFILE_EMAIL_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getAdminProfileEmail() {
+  try {
+    return localStorage.getItem(PROFILE_EMAIL_KEY) || '';
+  } catch {
+    return '';
+  }
+}
 
 export function getAdminSessionToken() {
   try {
@@ -21,6 +39,11 @@ export function setAdminSessionToken(token) {
 
 export function clearAdminSessionToken() {
   setAdminSessionToken(null);
+  try {
+    localStorage.removeItem(PROFILE_EMAIL_KEY);
+  } catch {
+    /* ignore */
+  }
 }
 
 function bearerForAdmin() {
@@ -32,6 +55,13 @@ function authHeaders() {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${bearerForAdmin()}`,
   };
+}
+
+export function postAdminChangePassword(body) {
+  return adminApi('/api/admin/change-password', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
 }
 
 export async function postAdminLogin(email, password) {
@@ -77,6 +107,10 @@ export async function adminApi(path, opts = {}) {
 
 export function fetchAdminState() {
   return adminApi('/api/admin/state');
+}
+
+export function fetchAdminDashboard() {
+  return adminApi('/api/admin/dashboard');
 }
 
 /** Order IDs are like `#ORD-…` — query string avoids `#` in URL path (path often 404). */

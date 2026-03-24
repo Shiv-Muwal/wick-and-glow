@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
   getAdminSessionToken,
   setAdminSessionToken,
+  setAdminProfileEmail,
   postAdminLogin,
 } from '../api/client.js';
 
@@ -30,6 +31,7 @@ export default function AdminLogin() {
       const { token } = await postAdminLogin(email.trim(), password);
       if (!token) throw new Error('No token from server');
       setAdminSessionToken(token);
+      setAdminProfileEmail(email.trim());
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || 'Login failed');

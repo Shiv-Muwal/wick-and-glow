@@ -11,6 +11,7 @@ import { cartRoutes } from './routes/cart.routes.js';
 import { orderRoutes } from './routes/order.routes.js';
 import { adminRouter } from './routes/admin.js';
 import { postAdminLogin } from './routes/adminLogin.js';
+import { postAdminChangePassword } from './routes/adminChangePassword.js';
 import { adminAuth } from './middleware/adminAuth.js';
 import { configureCloudinary } from './lib/cloudinary.js';
 import { errorMiddleware } from './middleware/errorMiddleware.js';
@@ -53,6 +54,7 @@ app.use('/api/cart', cartRoutes());
 app.use('/api', orderRoutes());
 app.use('/api', publicRouter());
 app.post('/api/admin/login', postAdminLogin);
+app.post('/api/admin/change-password', adminAuth, postAdminChangePassword);
 app.use('/api/admin', adminAuth, adminRouter());
 
 app.use(errorMiddleware);

@@ -1,16 +1,51 @@
 import React, { useState } from 'react';
 import Modal from '../components/ui/Modal.jsx';
 import ToggleSwitch from '../components/ui/ToggleSwitch.jsx';
+import { postAdminChangePassword } from '../api/client.js';
 
 function Settings() {
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [orderNotifications, setOrderNotifications] = useState(true);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [pwSubmitting, setPwSubmitting] = useState(false);
+  const [pwError, setPwError] = useState('');
 
-  const closePasswordModal = () => setPasswordModalOpen(false);
-
-  const handlePasswordSubmit = (event) => {
-    event.preventDefault();
+  const closePasswordModal = () => {
+    if (pwSubmitting) return;
     setPasswordModalOpen(false);
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setPwError('');
+  };
+
+  const handlePasswordSubmit = async (event) => {
+    event.preventDefault();
+    setPwError('');
+    if (newPassword.length < 8) {
+      setPwError('New password must be at least 8 characters');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPwError('New passwords do not match');
+      return;
+    }
+    setPwSubmitting(true);
+    try {
+      await postAdminChangePassword({ currentPassword, newPassword });
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setPwError('');
+      setPasswordModalOpen(false);
+      window.alert('Password updated. Use your new password on next login.');
+    } catch (e) {
+      setPwError(e.message || 'Could not update password');
+    } finally {
+      setPwSubmitting(false);
+    }
   };
 
   return (
@@ -38,7 +73,13 @@ function Settings() {
             </div>
             <button
               type="button"
-              onClick={() => setPasswordModalOpen(true)}
+              onClick={() => {
+                setPwError('');
+                setCurrentPassword('');
+                setNewPassword('');
+                setConfirmPassword('');
+                setPasswordModalOpen(true);
+              }}
               className="rounded-[8px] border border-[var(--border)] bg-transparent px-[12px] py-[6px] text-[12px] text-[var(--text2)] transition-colors hover:bg-[rgba(132,165,157,0.05)] hover:text-[var(--sage)]"
             >
               Change Password
@@ -75,7 +116,8 @@ function Settings() {
             <button
               type="button"
               onClick={closePasswordModal}
-              className="flex h-[30px] w-[30px] items-center justify-center rounded-[8px] bg-[var(--surface2)] text-[16px] text-[var(--text2)] transition-colors hover:bg-[#ef4444] hover:text-white"
+              disabled={pwSubmitting}
+              className="flex h-[30px] w-[30px] items-center justify-center rounded-[8px] bg-[var(--surface2)] text-[16px] text-[var(--text2)] transition-colors hover:bg-[#ef4444] hover:text-white disabled:opacity-50"
               aria-label="Close password modal"
             >
               ✕
@@ -90,7 +132,11 @@ function Settings() {
               <input
                 type="password"
                 placeholder="••••••••"
+                autoComplete="current-password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
                 className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none transition-all focus:border-[var(--sage)] focus:shadow-[0_0_0_3px_rgba(132,165,157,0.1)]"
+                required
               />
             </div>
             <div className="flex flex-col gap-[6px]">
@@ -100,7 +146,12 @@ function Settings() {
               <input
                 type="password"
                 placeholder="••••••••"
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none transition-all focus:border-[var(--sage)] focus:shadow-[0_0_0_3px_rgba(132,165,157,0.1)]"
+                required
+                minLength={8}
               />
             </div>
             <div className="flex flex-col gap-[6px]">
@@ -110,22 +161,32 @@ function Settings() {
               <input
                 type="password"
                 placeholder="••••••••"
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface2)] px-[13px] py-[10px] text-[13px] text-[var(--text)] outline-none transition-all focus:border-[var(--sage)] focus:shadow-[0_0_0_3px_rgba(132,165,157,0.1)]"
+                required
+                minLength={8}
               />
             </div>
+            {pwError ? (
+              <p className="md:col-span-2 text-[12px] font-medium text-red-600">{pwError}</p>
+            ) : null}
             <div className="mt-[2px] flex justify-end gap-[9px] md:col-span-2">
               <button
                 type="button"
                 onClick={closePasswordModal}
-                className="rounded-[10px] border border-[var(--border)] bg-transparent px-[17px] py-[9px] text-[13px] font-medium text-[var(--text2)] transition-colors hover:bg-[rgba(132,165,157,0.05)] hover:text-[var(--sage)]"
+                disabled={pwSubmitting}
+                className="rounded-[10px] border border-[var(--border)] bg-transparent px-[17px] py-[9px] text-[13px] font-medium text-[var(--text2)] transition-colors hover:bg-[rgba(132,165,157,0.05)] hover:text-[var(--sage)] disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="rounded-[10px] bg-[linear-gradient(135deg,var(--sage),#6b9088)] px-[17px] py-[9px] text-[13px] font-medium text-white shadow-[0_4px_14px_rgba(132,165,157,0.28)] transition-transform hover:-translate-y-[1px]"
+                disabled={pwSubmitting}
+                className="rounded-[10px] bg-[linear-gradient(135deg,var(--sage),#6b9088)] px-[17px] py-[9px] text-[13px] font-medium text-white shadow-[0_4px_14px_rgba(132,165,157,0.28)] transition-transform hover:-translate-y-[1px] disabled:opacity-60"
               >
-                Update Password
+                {pwSubmitting ? 'Updating…' : 'Update Password'}
               </button>
             </div>
           </form>
