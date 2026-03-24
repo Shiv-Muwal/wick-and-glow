@@ -30,16 +30,45 @@ const publicUploadsRoot = path.join(__dirname, '..', 'public', 'uploads');
 
 const app = express();
 
+/** Behind AWS ALB / NLB or similar — correct `req.ip` and `X-Forwarded-*` headers. */
+const trustProxyEnv = process.env.TRUST_PROXY;
+if (
+  trustProxyEnv === '1' ||
+  trustProxyEnv === 'true' ||
+  (/^\d+$/.test(String(trustProxyEnv || '')) && Number(trustProxyEnv) > 0)
+) {
+  const n = trustProxyEnv === '1' || trustProxyEnv === 'true' ? 1 : Number(trustProxyEnv);
+  app.set('trust proxy', n);
+} else if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 /** Local product images (fallback when Cloudinary fails or is unset) */
 app.use('/uploads', express.static(publicUploadsRoot));
 
+const allowedOriginsList = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+function corsOrigin(origin, cb) {
+  if (!origin) return cb(null, true);
+  if (allowedOriginsList.length > 0) {
+    return cb(null, allowedOriginsList.includes(origin));
+  }
+  if (/^http:\/\/localhost:(5173|5174)$/.test(origin)) return cb(null, true);
+  if (process.env.NODE_ENV === 'production') {
+    console.warn(
+      '[cors] Missing ALLOWED_ORIGINS — refusing browser Origin (set comma-separated storefront + admin URLs)'
+    );
+    return cb(null, false);
+  }
+  return cb(null, true);
+}
+
 app.use(
   cors({
-    origin: (origin, cb) => {
-      if (!origin) return cb(null, true);
-      if (/^http:\/\/localhost:(5173|5174)$/.test(origin)) return cb(null, true);
-      cb(null, true);
-    },
+    origin: corsOrigin,
     credentials: true,
   })
 );
