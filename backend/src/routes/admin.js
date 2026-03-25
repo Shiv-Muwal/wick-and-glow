@@ -12,6 +12,7 @@ import {
 import { docToAdminProduct, docToStoreProduct } from '../utils/transforms.js';
 import { uploadBuffer, destroyAsset, isCloudinaryConfigured } from '../lib/cloudinary.js';
 import { saveProductImageToDisk } from '../lib/localProductImage.js';
+import { normalizeMediaUrl } from '../lib/publicUrl.js';
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -138,7 +139,7 @@ export function adminRouter() {
           excerpt: b.excerpt,
           emoji: b.emoji,
           tag: b.tag,
-          coverImageUrl: b.coverImageUrl || '',
+          coverImageUrl: normalizeMediaUrl(b.coverImageUrl || ''),
         })),
         coupons: coupons.map((c) => ({
           id: String(c._id),
@@ -675,7 +676,7 @@ export function adminRouter() {
         emoji: blog.emoji || '🕯️',
         tag: blog.tag || 'Journal',
         content: blog.content || '',
-        coverImageUrl: blog.coverImageUrl || '',
+        coverImageUrl: normalizeMediaUrl(blog.coverImageUrl || ''),
       });
     } catch (e) {
       next(e);
@@ -704,7 +705,7 @@ export function adminRouter() {
         excerpt: row.excerpt,
         emoji: row.emoji,
         tag: row.tag,
-        coverImageUrl: row.coverImageUrl || '',
+        coverImageUrl: normalizeMediaUrl(row.coverImageUrl || ''),
       });
     } catch (e) {
       next(e);
@@ -738,7 +739,7 @@ export function adminRouter() {
         excerpt: blog.excerpt,
         emoji: blog.emoji,
         tag: blog.tag,
-        coverImageUrl: blog.coverImageUrl || '',
+        coverImageUrl: normalizeMediaUrl(blog.coverImageUrl || ''),
       });
     } catch (e) {
       next(e);

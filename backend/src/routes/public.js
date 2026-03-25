@@ -6,6 +6,7 @@ import {
   NewsletterSubscriber,
 } from '../models/index.js';
 import { formatBlogDate } from '../utils/transforms.js';
+import { normalizeMediaUrl } from '../lib/publicUrl.js';
 import * as products from '../controllers/productController.js';
 import { sendNewsletterWelcome } from '../lib/mailer.js';
 
@@ -25,7 +26,7 @@ export function publicRouter() {
         excerpt: b.excerpt,
         date: formatBlogDate(b.date),
         emoji: b.emoji,
-        coverImageUrl: b.coverImageUrl || '',
+        coverImageUrl: normalizeMediaUrl(b.coverImageUrl || ''),
       }));
       res.json(formatted);
     } catch (e) {

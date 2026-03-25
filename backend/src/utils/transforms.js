@@ -1,3 +1,5 @@
+import { normalizeMediaUrl } from '../lib/publicUrl.js';
+
 export function docToStoreProduct(doc) {
   const o = doc.toObject ? doc.toObject() : { ...doc };
   const id = String(o._id);
@@ -11,7 +13,7 @@ export function docToStoreProduct(doc) {
       o.originalPrice != null ? String(Math.round(o.originalPrice)) : undefined,
     emoji: o.emoji,
     imageClass: o.imageClass || '',
-    imageUrl: o.imageUrl || '',
+    imageUrl: normalizeMediaUrl(o.imageUrl || ''),
     badge: o.badge || '',
     desc: o.description,
     color: o.galleryColor || '#f5cac3',
@@ -30,7 +32,7 @@ export function docToAdminProduct(doc) {
     stock: o.stock,
     description: o.description,
     emoji: o.emoji,
-    imageUrl: o.imageUrl || '',
+    imageUrl: normalizeMediaUrl(o.imageUrl || ''),
     cloudinaryPublicId: o.cloudinaryPublicId || '',
   };
 }

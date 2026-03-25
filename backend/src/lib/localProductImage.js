@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { absoluteBaseForRequest } from './publicUrl.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -30,7 +31,6 @@ export async function saveProductImageToDisk(buffer, productId, mimetype, req) {
   const filepath = path.join(PRODUCTS_UPLOAD_DIR, filename);
   await fs.writeFile(filepath, buffer);
 
-  const host = req.get('host') || `localhost:${process.env.PORT || 3000}`;
-  const proto = req.protocol || 'http';
-  return `${proto}://${host}/uploads/products/${filename}`;
+  const base = absoluteBaseForRequest(req);
+  return `${base}/uploads/products/${filename}`;
 }
