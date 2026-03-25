@@ -1,6 +1,6 @@
 /**
  * Production: PUBLIC_BASE_URL=https://wickandglow.in (no trailing slash).
- * Nginx ke peeche sahi absolute URLs + purane localhost DB URLs fix.
+ * Nginx ke peeche sahi absolute URLs + purane localhost / http DB URLs fix.
  */
 
 function parseOrigin(raw) {
@@ -12,6 +12,10 @@ function parseOrigin(raw) {
   } catch {
     return null;
   }
+}
+
+function hostKey(hostname) {
+  return String(hostname || '').replace(/^www\./i, '').toLowerCase();
 }
 
 /** Naye upload URLs ke liye (disk save). */
@@ -26,27 +30,36 @@ export function absoluteBaseForRequest(req) {
   return `${proto}://${host}`;
 }
 
-/** API se browser ko bhejne se pehle — DB mein save purane http://localhost:... URLs. */
+/** API se browser ko bhejne se pehle — DB mein save purane http://... URLs. */
 export function normalizeMediaUrl(url) {
   if (url == null || url === '') return '';
   const s = String(url).trim();
   if (!s) return '';
 
   const origin = parseOrigin(process.env.PUBLIC_BASE_URL);
-  if (!origin) return s;
 
   if (s.startsWith('/')) {
-    return `${origin}${s}`;
+    if (origin) return `${origin}${s}`;
+    return s;
   }
 
   try {
     const u = new URL(s);
+
     if (/^(localhost|127\.0\.0\.1)$/i.test(u.hostname)) {
-      return `${origin}${u.pathname}${u.search}${u.hash}`;
+      if (origin) return `${origin}${u.pathname}${u.search}${u.hash}`;
+      return s;
     }
-    const baseHost = new URL(origin).hostname;
-    if (u.hostname === baseHost) {
-      return `${origin}${u.pathname}${u.search}${u.hash}`;
+
+    if (origin) {
+      const baseHost = new URL(origin).hostname;
+      if (hostKey(u.hostname) === hostKey(baseHost)) {
+        return `${origin}${u.pathname}${u.search}${u.hash}`;
+      }
+    }
+
+    if (process.env.NODE_ENV === 'production' && u.protocol === 'http:' && !/^(localhost|127\.0\.0\.1)$/i.test(u.hostname)) {
+      return `https://${u.hostname}${u.pathname}${u.search}${u.hash}`;
     }
   } catch {
     return s;
