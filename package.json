@@ -1,0 +1,15 @@
+{
+  "name": "wicknglow",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=18.18.0",
+    "npm": ">=7.0.0"
+  },
+  "scripts": {
+    "build:frontend": "npm run build:deploy --prefix ./frontend",
+    "build:admin": "npm run build:deploy --prefix ./admin",
+    "install:backend": "npm ci --prefix ./backend",
+    "build:production": "npm run build:frontend && npm run build:admin && npm run install:backend"
+  }
+}
